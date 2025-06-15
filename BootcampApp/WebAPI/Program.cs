@@ -1,37 +1,81 @@
-using WebAPI.Services;
+using System.Text;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using BootcampApp.Repository;
+using BootcampApp.Service;
+
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ?? Registracija kontrolera (obavezno!)
-builder.Services.AddControllers();
+// === Umjesto defaultnog ServiceProvider-a koristi Autofac ===
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
-// ?? Swagger (nije obavezno, ali korisno)
+// === Autofac konfiguracija za DI ===
+builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                          ?? throw new InvalidOperationException("Connection string not found.");
+
+    // Registriraj repozitorije
+    containerBuilder.Register(c =>
+    {
+        var logger = c.Resolve<ILogger<UserRepository>>();
+        return new UserRepository(connectionString, logger);
+    }).As<IUserRepository>().InstancePerLifetimeScope();
+
+    containerBuilder.Register(c =>
+    {
+        var logger = c.Resolve<ILogger<PizzaOrderRepository>>();
+        return new PizzaOrderRepository(connectionString, logger);
+    }).As<IPizzaOrderRepository>().InstancePerLifetimeScope();
+
+    containerBuilder.Register(c =>
+    {
+        var logger = c.Resolve<ILogger<PizzaRepository>>();
+        return new PizzaRepository(connectionString, logger);
+    }).As<IPizzaRepository>().InstancePerLifetimeScope();
+
+    containerBuilder.Register(c =>
+    {
+        var logger = c.Resolve<ILogger<DrinksOrderRepository>>();
+        return new DrinksOrderRepository(connectionString, logger);
+    }).As<IDrinksOrderRepository>().InstancePerLifetimeScope();
+
+    containerBuilder.RegisterType<DrinksOrderService>().As<IDrinksOrderService>().InstancePerLifetimeScope();
+
+
+    // Registriraj servise
+    containerBuilder.RegisterType<UserService>().AsSelf().InstancePerLifetimeScope();
+    containerBuilder.RegisterType<PizzaOrderService>()
+    .As<IPizzaOrderService>()
+    .InstancePerLifetimeScope();
+
+});
+
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// --- Ovdje dohvaæaš connection string iz appsettings.json ---
-string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                          ?? throw new InvalidOperationException("Connection string not found.");
-builder.Services.AddScoped<UserService>(sp => new UserService(connectionString));
 
-// Registriraj UserService u DI (kao scoped ili singleton)
-builder.Services.AddScoped<UserService>(sp => new UserService(connectionString));
+
+// Logger setup
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 var app = builder.Build();
 
-// ?? Swagger UI za razvoj
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// ?? HTTPS redirekcija i autorizacija
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
-// ?? Mapiranje kontrolera na URL rute (obavezno!)
 app.MapControllers();
 
 app.Run();
+
+
 
