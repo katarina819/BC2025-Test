@@ -2,7 +2,8 @@
 using BootcampApp.Service;  // UserService
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using WebAPI.DTOs;
+using BootcampApp.Common.DTOs;
+using BootcampApp.Common.Mappers;
 
 namespace WebAPI.Controllers
 {
@@ -10,43 +11,21 @@ namespace WebAPI.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
         private readonly ILogger<UsersController> _logger;
 
-        public UsersController(UserService userService, ILogger<UsersController> logger)
+        public UsersController(IUserService userService, ILogger<UsersController> logger)
         {
             _userService = userService;
             _logger = logger;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers(
-            string? searchValue = null,
-            string? sortBy = null,
-            int page = 1, 
-            int rpp = 10)
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers(string? searchValue = null, string? sortBy = null, int page = 1, int rpp = 10)
         {
-            if (page < 1) page = 1;
-            if (rpp < 1) rpp = 10;
-
             try
             {
-                var users = await _userService.GetAllUsersAsync(searchValue, sortBy, page, rpp);
-
-                var userDtos = users.Select(user => new UserDto
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Email = user.Email,
-                    Age = user.Age,
-                    Profile = user.Profile == null ? null : new UserProfileDto
-                    {
-                        UserId = user.Profile.UserId,
-                        PhoneNumber = user.Profile.PhoneNumber,
-                        Address = user.Profile.Address
-                    }
-                });
-
+                var userDtos = await _userService.GetAllUsersDtoAsync(searchValue, sortBy, page, rpp);
                 return Ok(userDtos);
             }
             catch (Exception ex)
@@ -57,28 +36,13 @@ namespace WebAPI.Controllers
         }
 
 
-
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<UserDto>> GetUser(Guid id)
         {
             try
             {
-                var user = await _userService.GetUserByIdAsync(id);
-                if (user == null) return NotFound();
-
-                var userDto = new UserDto
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Email = user.Email,
-                    Age = user.Age,
-                    Profile = user.Profile == null ? null : new UserProfileDto
-                    {
-                        UserId = user.Profile.UserId,
-                        PhoneNumber = user.Profile.PhoneNumber,
-                        Address = user.Profile.Address
-                    }
-                };
+                var userDto = await _userService.GetUserByIdDtoAsync(id);
+                if (userDto == null) return NotFound();
 
                 return Ok(userDto);
             }
@@ -145,29 +109,10 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<UserDto>>> SearchUsers(
-    string? searchValue,
-    string? sortBy,
-    int page = 1,
-    int rpp = 10)
+        public async Task<ActionResult<IEnumerable<UserDto>>> SearchUsers(string? searchValue, string? sortBy, int page = 1, int rpp = 10)
         {
-            var users = await _userService.GetAllUsersAsync(searchValue, sortBy, page, rpp);
-
-            var dtos = users.Select(u => new UserDto
-            {
-                Id = u.Id,
-                Name = u.Name,
-                Email = u.Email,
-                Age = u.Age,
-                Profile = u.Profile == null ? null : new UserProfileDto
-                {
-                    UserId = u.Id,
-                    PhoneNumber = u.Profile.PhoneNumber,
-                    Address = u.Profile.Address
-                }
-            });
-
-            return Ok(dtos);
+            var userDtos = await _userService.GetAllUsersDtoAsync(searchValue, sortBy, page, rpp);
+            return Ok(userDtos);
         }
     }
 }

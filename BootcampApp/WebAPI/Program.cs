@@ -46,14 +46,18 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 
 
     // Registriraj servise
-    containerBuilder.RegisterType<UserService>().AsSelf().InstancePerLifetimeScope();
+    containerBuilder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
+
     containerBuilder.RegisterType<PizzaOrderService>()
     .As<IPizzaOrderService>()
     .InstancePerLifetimeScope();
 
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(opts =>
+        opts.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull);
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

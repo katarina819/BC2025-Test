@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BootcampApp.Common\BootcampApp.Common.csproj" />
+    <ProjectReference Include="..\BootcampApp.Model\BootcampApp.Model.csproj" />
+    <ProjectReference Include="..\BootcampApp.Repository\BootcampApp.Repository.csproj" />
+  </ItemGroup>
+
+</Project>

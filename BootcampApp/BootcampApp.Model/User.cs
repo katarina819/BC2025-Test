@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace BootcampApp.Model
 {
@@ -13,10 +14,13 @@ namespace BootcampApp.Model
 
     public class UserProfile
     {
-        public Guid UserId { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Address { get; set; }
+        public Guid? UserId { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Address { get; set; }
 
+
+
+        [JsonIgnore] // Sprečava prikazivanje `user: null` u responseu
         public User User { get; set; }
     }
 
