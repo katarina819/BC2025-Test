@@ -305,6 +305,20 @@ SELECT * FROM "Drinks";
 DROP TABLE "DrinkOrderItems";
 SELECT * FROM "DrinkOrderItems";
 
+ALTER TABLE "DrinkOrderItems"
+ADD COLUMN "CardPaymentTransactionId" VARCHAR(255);
+
+-- Pronađi tablice koje sadrže CardPaymentTransactionId
+SELECT table_name, column_name
+FROM information_schema.columns
+WHERE column_name = 'CardPaymentTransactionId';
+
+ALTER TABLE "DrinkOrderItems"
+DROP COLUMN IF EXISTS "CardPaymentTransactionId";
+
+
+
+
 CREATE TABLE "DrinkOrderItems" (
     "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     "OrderId" UUID NOT NULL,
@@ -331,6 +345,8 @@ VALUES ('4adf9527-a452-4835-b036-d394ef8dafe7', '9a7d9d99-4565-4dea-8c39-b5ccb18
 
 
 
+ALTER TABLE "PizzaOrders" RENAME TO pizza_orders;
+SELECT * FROM pizza_orders;
 
 
 CREATE TABLE "PizzaOrders" (
@@ -347,16 +363,22 @@ CREATE TABLE "DrinksOrders" (
     FOREIGN KEY ("UserId") REFERENCES "Users"("Id") ON DELETE CASCADE
 	);
 
+ALTER TABLE "DrinksOrders" RENAME TO drinks_orders;
+
 INSERT INTO "DrinksOrders" ("UserId") VALUES
 ('02705186-7608-4e49-bd0e-450e7253735c'),
  ('89a819e1-ac2a-41e8-98ff-516d1b994b87');
 
  SELECT * FROM "DrinksOrders";
-
+ select * from drinks_orders;
 INSERT INTO "PizzaOrders" ("UserId") VALUES
 ('8545b460-fec0-46ce-af3b-3b0f4644c699'),  -- Ana
 ('670dffdc-a4dd-47d2-8aac-be8bb00452e4'),  -- Ivan
 ('81ee6d58-4a84-4f0b-8539-565e4b55ad07');  -- Marko
+
+ALTER TABLE drinks_orders
+ADD COLUMN "CardPaymentTransactionId" VARCHAR(100);
+
 
 select * from "PizzaOrders";
 
@@ -430,7 +452,7 @@ SELECT
     poi."Quantity",
     poi."UnitPrice"
 FROM "PizzaOrderItems" poi
-RIGHT JOIN "PizzaOrders" po ON poi."OrderId" = po."OrderId"
+RIGHT JOIN pizza_orders po ON poi."OrderId" = po."OrderId"
 RIGHT JOIN "Users" u ON po."UserId" = u."Id"
 RIGHT JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
 
@@ -584,8 +606,205 @@ JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
 JOIN "PizzaItems" p ON poi."PizzaId" = p."PizzaId"
 ORDER BY po."OrderDate", po."OrderId";
 
+SELECT * FROM "Users";
+SELECT * FROM "Drinks";
+
+SELECT
+  dr."OrderId", dr."OrderDate",
+  u."Id", u."Name", u."Email", u."Age",
+  up."PhoneNumber", up."Address",
+  doi."OrderItemId", doi."Quantity", doi."UnitPrice",
+  d."DrinkId", d."Name", d."Size", d."Price"
+FROM "DrinksOrders" dr
+JOIN "Users" u ON dr."UserId" = u."Id"
+LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
+JOIN "DrinkOrderItems" doi ON dr."OrderId" = doi."OrderId"
+JOIN "Drinks" d ON doi."DrinkId" = d."DrinkId"
+ORDER BY dr."OrderDate", dr."OrderId";
+
+CREATE TABLE payment_methods (
+  payment_method_id SERIAL PRIMARY KEY,
+  name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE payments (
+  payment_id SERIAL PRIMARY KEY,
+  order_id UUID NOT NULL,
+  payment_method_id INT NOT NULL,
+  amount NUMERIC(10,2) NOT NULL,
+  payment_date TIMESTAMP NOT NULL DEFAULT NOW()
+  -- Ne možemo staviti FOREIGN KEY na order_id jer se može nalaziti u dvije različite tablice
+);
+
+select * from payment_methods;
+select * from payments;
+
+ALTER TABLE payments
+ADD COLUMN order_type VARCHAR(20);
+
+
+-- Za pizzu:
+SELECT p.*, po.*
+FROM payments p
+JOIN pizza_orders po ON p.order_id = po."OrderId"
+WHERE p.order_type = 'pizza';
+
+
+-- Za piće:
+SELECT p.*, d.*
+FROM payments p
+JOIN drinks_orders d ON p.order_id = d."OrderId";
+
+
+INSERT INTO payment_methods (name) VALUES
+('Cash'),
+('Card');
+
+INSERT INTO payments (order_id, payment_method_id, amount, payment_date, order_type) VALUES
+('f09686a5-9ea1-4023-8556-b2003fb16f4c', 1, 19.99, '2025-06-28 12:30:00', 'drink'),
+('4adf9527-a452-4835-b036-d394ef8dafe7', 2, 34.50, '2025-06-28 13:15:00', 'drink'),
+('b9a9d0b3-bb5d-464e-8b47-0580ef0f3414', 1, 12.00, '2025-03-20 13:15:00', 'pizza'),
+('02f9b04e-6546-48a5-a06d-a04ae8f3ed87', 2, 25.75, '2025-04-18 12:30:00', 'pizza');
+
+
+ALTER TABLE payments ADD COLUMN order_type VARCHAR(20);
+
+drop table payments;
+
+SELECT 
+    p.order_id,
+    p.amount,
+    p.payment_date,
+    p.order_type,
+    po."UserId" AS pizza_user_id,
+    d."UserId" AS drink_user_id
+FROM "payments" p
+LEFT JOIN pizza_orders po 
+    ON p.order_id = po."OrderId" AND p.order_type = 'pizza'
+LEFT JOIN drinks_orders d 
+    ON p.order_id = d."OrderId" AND p.order_type = 'drink';
+
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public';
 
 
 
+SELECT * FROM information_schema.tables WHERE table_name = 'pizza_orders';
+SELECT * FROM information_schema.tables WHERE table_name = 'drinks_orders';
 
 
+SELECT table_name
+FROM information_schema.tables
+WHERE table_name = 'pizza_orders';
+
+SELECT table_name
+FROM information_schema.tables
+WHERE table_name = 'PizzaOrders';
+
+
+SELECT "OrderId", "UserId", "OrderDate", "CardPaymentTransactionId"
+FROM drinks_orders
+WHERE "OrderId" = 'f09686a5-9ea1-4023-8556-b2003fb16f4c';
+
+CREATE TABLE notifications (
+    notification_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    link TEXT NULL
+);
+
+CREATE INDEX idx_notifications_user_id ON notifications(user_id);
+
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+select * from notifications;
+
+ALTER TABLE "Users"
+ADD COLUMN "Username" VARCHAR(100) UNIQUE;
+
+UPDATE "Users" SET "Username" = "Email" WHERE "Username" IS NULL;
+
+SELECT "Email", COUNT(*)
+FROM "Users"
+GROUP BY "Email"
+HAVING COUNT(*) > 1;
+
+
+WITH duplicates AS (
+    SELECT
+        "Id",
+        "Email",
+        ROW_NUMBER() OVER (PARTITION BY "Email" ORDER BY "Id") AS rn
+    FROM "Users"
+)
+UPDATE "Users" u
+SET "Username" = CASE
+    WHEN d.rn = 1 THEN d."Email"
+    ELSE d."Email" || '_' || d.rn::text
+END
+FROM duplicates d
+WHERE u."Id" = d."Id";
+
+
+SELECT "Username", COUNT(*)
+FROM "Users"
+GROUP BY "Username"
+HAVING COUNT(*) > 1;
+
+
+ALTER TABLE "Users"
+ALTER COLUMN "Username" SET NOT NULL;
+
+ALTER TABLE "Users"
+ADD CONSTRAINT unique_username UNIQUE ("Username");
+SELECT COUNT(*) FROM "Users" WHERE "Username" IS NULL;
+
+
+ALTER TABLE "Users"
+ADD COLUMN "PasswordHash" VARCHAR(255) NOT NULL;
+
+ALTER TABLE "Users"
+ADD COLUMN "PasswordHash" VARCHAR(255);
+
+UPDATE "Users" SET "PasswordHash" = '' WHERE "PasswordHash" IS NULL;
+
+ALTER TABLE "Users"
+ALTER COLUMN "PasswordHash" SET NOT NULL;
+ select * from "Users";
+
+
+
+SELECT
+    column_name,
+    data_type,
+    is_nullable,
+    column_default
+FROM
+    information_schema.columns
+WHERE
+    table_schema = 'public'  -- ili zamijeni s tvojim schema-om ako nije 'public'
+    AND table_name = 'Users' -- ime tvoje tablice, pazi na velika/mala slova
+ORDER BY
+    ordinal_position;
+
+select * from "Users";
+
+ALTER TABLE "Users" DROP COLUMN "Username";
+-- ili ako želiš zadržati, ali nije obavezno:
+ALTER TABLE "Users" ALTER COLUMN "Username" DROP NOT NULL;
+ALTER TABLE "Users" DROP COLUMN "PasswordHash";
+
+UPDATE "PizzaItems"
+SET "Size" = CASE "Size"
+    WHEN 'Mala' THEN 'small'
+    WHEN 'Srednja' THEN 'medium'
+    WHEN 'Velika' THEN 'large'
+    ELSE "Size" -- ostavi ostale vrijednosti nepromijenjene
+END
+WHERE "Size" IN ('Mala', 'Srednja', 'Velika');
+
+
+select * from "PizzaItems";

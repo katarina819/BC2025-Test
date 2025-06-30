@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BootcampApp.Common\BootcampApp.Common.csproj" />
     <ProjectReference Include="..\BootcampApp.Model\BootcampApp.Model.csproj" />
     <ProjectReference Include="..\BootcampApp.Repository\BootcampApp.Repository.csproj" />
