@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="8.3.0" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+		<PackageReference Include="Npgsql" Version="9.0.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\BootcampApp.Common\BootcampApp.Common.csproj" />
+		<ProjectReference Include="..\BootcampApp.Model\BootcampApp.Model.csproj" />
+		<ProjectReference Include="..\Bootcamp.App.Service\BootcampApp.Service.csproj" />
+	</ItemGroup>
+
+</Project>
+
