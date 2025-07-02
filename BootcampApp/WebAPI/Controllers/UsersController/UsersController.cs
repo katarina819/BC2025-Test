@@ -10,10 +10,11 @@ using Microsoft.Extensions.Logging;
 using AppLoginRequest = BootcampApp.Common.LoginRequest.LoginRequest;
 using BootcampApp.Common;
 
-
-
 namespace WebAPI.Controllers
 {
+    /// <summary>
+    /// Controller responsible for user management and authentication.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
@@ -21,8 +22,14 @@ namespace WebAPI.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
         private readonly INotificationService _notificationService;
-
         private readonly ILogger<UsersController> _logger;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UsersController"/> class.
+        /// </summary>
+        /// <param name="userService">Service for user operations.</param>
+        /// <param name="notificationService">Service for user notifications.</param>
+        /// <param name="logger">Logger instance.</param>
         public UsersController(IUserService userService, INotificationService notificationService, ILogger<UsersController> logger)
         {
             _userService = userService;
@@ -30,24 +37,25 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult> SearchAsync(int page = 1, int pageSize = 10)
-        //{
-        //    var users = await _userService.GetUsersPagedAsync(page, pageSize);
-        //    var totalCount = await _userService.CountUsersAsync();
+        /*
+        /// <summary>
+        /// Searches users with pagination.
+        /// </summary>
+        /// <param name="page">Page number (default 1).</param>
+        /// <param name="pageSize">Number of users per page (default 10).</param>
+        /// <returns>Paged list of users with total count.</returns>
+        [HttpGet]
+        public async Task<ActionResult> SearchAsync(int page = 1, int pageSize = 10)
+        {
+            // Implementation...
+        }
+        */
 
-        //    var result = new
-        //    {
-        //        Data = users,
-        //        TotalCount = totalCount,
-        //        Page = page,
-        //        RowsPerPage = pageSize
-        //    };
-
-        //    return Ok(result);
-        //}
-
-
+        /// <summary>
+        /// Authenticates user by name and email.
+        /// </summary>
+        /// <param name="request">Login request containing name and email.</param>
+        /// <returns>User data if authentication is successful; Unauthorized otherwise.</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AppLoginRequest request)
         {
@@ -59,9 +67,11 @@ namespace WebAPI.Controllers
             return Ok(user);
         }
 
-
-
-
+        /// <summary>
+        /// Retrieves user details by ID.
+        /// </summary>
+        /// <param name="id">User ID.</param>
+        /// <returns>User details if found; NotFound otherwise.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -72,16 +82,18 @@ namespace WebAPI.Controllers
             return Ok(user);
         }
 
-
-
-
+        /// <summary>
+        /// Creates a new user.
+        /// </summary>
+        /// <param name="request">User creation request containing user info.</param>
+        /// <returns>Created user and URI to access it.</returns>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUserRequest request)
         {
             var user = new User
             {
-                Id = Guid.NewGuid(),             
-                Name = request.Name,         // ✅ sad postoji
+                Id = Guid.NewGuid(),
+                Name = request.Name,
                 Email = request.Email,
                 Age = request.Age,
                 Profile = new UserProfile
@@ -97,48 +109,37 @@ namespace WebAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
 
-        //[HttpPut("{id:guid}")]
-        //public async Task<IActionResult> UpdateUser(Guid id, User updatedUser)
-        //{
-        //    try
-        //    {
-        //        var updated = await _userService.UpdateUserAsync(id, updatedUser);
-        //        return updated ? Ok(updatedUser) : NotFound();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Greška pri ažuriranju korisnika s ID {UserId}", id);
-        //        return StatusCode(500, "Interna greška servera.");
-        //    }
-        //}
+        /*
+        /// <summary>
+        /// Updates an existing user.
+        /// </summary>
+        /// <param name="id">User ID.</param>
+        /// <param name="updatedUser">User data to update.</param>
+        /// <returns>Updated user data or NotFound.</returns>
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateUser(Guid id, User updatedUser)
+        {
+            // Implementation...
+        }
 
-        //[HttpDelete("{id:guid}")]
-        //public async Task<IActionResult> DeleteUser(Guid id)
-        //{
-        //    try
-        //    {
-        //        var deleted = await _userService.DeleteUserAsync(id);
-        //        return deleted ? Ok() : NotFound();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Greška pri brisanju korisnika s ID {UserId}", id);
-        //        return StatusCode(500, "Interna greška servera.");
-        //    }
+        /// <summary>
+        /// Deletes a user by ID.
+        /// </summary>
+        /// <param name="id">User ID.</param>
+        /// <returns>Ok if deleted, NotFound otherwise.</returns>
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            // Implementation...
+        }
+        */
 
-
-
-        //}
-
-        //[HttpGet("search")]
-        //public async Task<ActionResult<IEnumerable<UserDto>>> SearchUsers(string? searchValue, string? sortBy, string sortOrder = "asc", int page = 1, int rpp = 10)
-        //{
-        //    var userDtos = await _userService.SearchAsync(searchValue, sortBy,  sortOrder, page, rpp);
-        //    return Ok(userDtos);
-        //}
-
-
-
+        /// <summary>
+        /// Updates a user partially with provided data.
+        /// </summary>
+        /// <param name="id">User ID.</param>
+        /// <param name="dto">Update data transfer object.</param>
+        /// <returns>Updated user data or NotFound if user does not exist.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserDto dto)
         {
@@ -153,6 +154,11 @@ namespace WebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves notifications for a specific user.
+        /// </summary>
+        /// <param name="userId">User ID.</param>
+        /// <returns>List of notifications or NotFound if none exist.</returns>
         [HttpGet("{userId}/notifications")]
         public async Task<IActionResult> GetUserNotifications(Guid userId)
         {
@@ -163,11 +169,5 @@ namespace WebAPI.Controllers
 
             return Ok(notifications);
         }
-
-
-
-
-
     }
 }
-

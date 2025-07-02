@@ -6,15 +6,28 @@ using Npgsql;
 
 namespace BootcampApp.Repository
 {
+    /// <summary>
+    /// Provides methods for managing user notifications using a PostgreSQL database.
+    /// </summary>
     public class NotificationRepository : INotificationRepository
     {
         private readonly string _connectionString;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotificationRepository"/> class.
+        /// </summary>
+        /// <param name="connectionString">The connection string for the PostgreSQL database.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="connectionString"/> is null.</exception>
         public NotificationRepository(string connectionString)
         {
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
+        /// <summary>
+        /// Retrieves all notifications for a specific user, ordered by creation time (descending).
+        /// </summary>
+        /// <param name="userId">The ID of the user whose notifications to retrieve.</param>
+        /// <returns>A list of <see cref="Notification"/> objects.</returns>
         public async Task<List<Notification>> GetByUserIdAsync(Guid userId)
         {
             var notifications = new List<Notification>();
@@ -49,11 +62,19 @@ namespace BootcampApp.Repository
             return notifications;
         }
 
+        /// <summary>
+        /// Adds a new notification by delegating to the <see cref="AddAsync"/> method.
+        /// </summary>
+        /// <param name="notification">The <see cref="Notification"/> to add.</param>
         public async Task AddNotificationAsync(Notification notification)
         {
             await AddAsync(notification);
         }
 
+        /// <summary>
+        /// Adds a new notification to the database.
+        /// </summary>
+        /// <param name="notification">The <see cref="Notification"/> to add.</param>
         public async Task AddAsync(Notification notification)
         {
             const string sql = @"
@@ -74,12 +95,16 @@ namespace BootcampApp.Repository
             await cmd.ExecuteNonQueryAsync();
         }
 
+        /// <summary>
+        /// Marks all notifications for a specific user as read.
+        /// </summary>
+        /// <param name="userId">The ID of the user whose notifications should be marked as read.</param>
         public async Task MarkAllAsReadAsync(Guid userId)
         {
             const string sql = @"
-        UPDATE notifications
-        SET is_read = TRUE
-        WHERE user_id = @user_id";
+                UPDATE notifications
+                SET is_read = TRUE
+                WHERE user_id = @user_id";
 
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -90,7 +115,10 @@ namespace BootcampApp.Repository
             await cmd.ExecuteNonQueryAsync();
         }
 
-
+        /// <summary>
+        /// Deletes a specific notification by its ID.
+        /// </summary>
+        /// <param name="notificationId">The ID of the notification to delete.</param>
         public async Task DeleteNotificationAsync(Guid notificationId)
         {
             const string sql = "DELETE FROM notifications WHERE notification_id = @NotificationId;";
@@ -104,13 +132,16 @@ namespace BootcampApp.Repository
             await cmd.ExecuteNonQueryAsync();
         }
 
-
+        /// <summary>
+        /// Marks a specific notification as read.
+        /// </summary>
+        /// <param name="notificationId">The ID of the notification to mark as read.</param>
         public async Task MarkAsReadAsync(Guid notificationId)
         {
             const string sql = @"
-        UPDATE notifications
-        SET is_read = TRUE
-        WHERE notification_id = @notification_id";
+                UPDATE notifications
+                SET is_read = TRUE
+                WHERE notification_id = @notification_id";
 
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -121,13 +152,15 @@ namespace BootcampApp.Repository
             await cmd.ExecuteNonQueryAsync();
         }
 
+        /// <summary>
+        /// Retrieves all notifications for a specific user.
+        /// This method wraps <see cref="GetByUserIdAsync"/> for naming consistency.
+        /// </summary>
+        /// <param name="userId">The ID of the user whose notifications to retrieve.</param>
+        /// <returns>A list of <see cref="Notification"/> objects.</returns>
         public async Task<List<Notification>> GetNotificationsByUserIdAsync(Guid userId)
         {
             return await GetByUserIdAsync(userId);
         }
-
-
-
-
     }
 }

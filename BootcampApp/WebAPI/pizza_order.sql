@@ -2,9 +2,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
 CREATE TABLE "Users" (
-    "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    "Name" VARCHAR(100) NOT NULL,
-    "Email" VARCHAR(100) NOT NULL,
+   "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   "Name" VARCHAR(100) NOT NULL,
+   "Email" VARCHAR(100) NOT NULL,
 	"Age" INT NOT NULL
 );
 
@@ -12,17 +12,17 @@ ALTER TABLE "Users"
 ADD COLUMN "Age" INT;
 UPDATE "Users"
 SET "Age" = CASE "Name"
-    WHEN 'Ana' THEN 25
-    WHEN 'Ivan' THEN 30
-    WHEN 'Marko' THEN 28
-    WHEN 'Petra' THEN 22
-    WHEN 'Luka' THEN 35
-    WHEN 'Maja' THEN 27
-    WHEN 'Nikola' THEN 33
-    WHEN 'Tina' THEN 24
-    WHEN 'Filip' THEN 29
-    WHEN 'Ivana' THEN 26
-    ELSE NULL
+   WHEN 'Ana' THEN 25
+   WHEN 'Ivan' THEN 30
+   WHEN 'Marko' THEN 28
+   WHEN 'Petra' THEN 22
+   WHEN 'Luka' THEN 35
+   WHEN 'Maja' THEN 27
+   WHEN 'Nikola' THEN 33
+   WHEN 'Tina' THEN 24
+   WHEN 'Filip' THEN 29
+   WHEN 'Ivana' THEN 26
+   ELSE NULL
 END;
 
 
@@ -68,11 +68,6 @@ RETURNING "Id";
 
 select * from "Users";
 
-delete from "Users"
-WHERE "Id" = '8545b460-fec0-46ce-af3b-3b0f4644c699';
-
-delete from "Users"
-WHERE "Id" = '53307b3a-601b-445f-93bc-be8b4f64b083';
 
 INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
 VALUES ('011c1f93-abd2-43e2-9634-cb24decff7e4', 'Nikola', 'nikola@example.com', 33);
@@ -92,12 +87,11 @@ INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('7beb4278-9cba-42c6-b1d8-765
 INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('3f5bc139-40f5-4716-8feb-34faefa05bd5', 'Filip', 'filip@example.com');
 INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('c51bcdbf-076a-48ac-b70a-91f60fe48945', 'Ivana', 'ivana@example.com');
 
-DROP table "UserProfiles";
 CREATE TABLE "UserProfiles" (
-    "UserId" UUID PRIMARY KEY,
-    "PhoneNumber" VARCHAR(20),
-    "Address" TEXT,
-    FOREIGN KEY ("UserId") REFERENCES "Users"("Id") ON DELETE CASCADE
+   "UserId" UUID PRIMARY KEY,
+   "PhoneNumber" VARCHAR(20),
+   "Address" TEXT,
+   FOREIGN KEY ("UserId") REFERENCES "Users"("Id") ON DELETE CASCADE
 );
 
 INSERT INTO "UserProfiles"("UserId", "PhoneNumber", "Address") 
@@ -121,10 +115,10 @@ INSERT INTO "UserProfiles" ("UserId", "PhoneNumber", "Address") VALUES
 select * from "UserProfiles"; 
 
 CREATE TABLE "PizzaItems" (
-    "PizzaId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    "Name" VARCHAR(100) NOT NULL,
-    "Size" VARCHAR(20),  -- npr. "Mala", "Srednja", "Velika"
-    "Price" NUMERIC(10, 2) NOT NULL
+   "PizzaId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   "Name" VARCHAR(100) NOT NULL,
+   "Size" VARCHAR(20),  -- npr. "Mala", "Srednja", "Velika"
+   "Price" NUMERIC(10, 2) NOT NULL
 );
 
 INSERT INTO "PizzaItems" ("Name", "Size", "Price") VALUES
@@ -181,76 +175,58 @@ INSERT INTO "PizzaItems" ("Name", "Size", "Price") VALUES
 
 UPDATE "PizzaItems"
 SET "Price" = CASE 
-    -- Margherita
-    WHEN "Name" = 'Margherita' AND "Size" = 'Mala' THEN 5.40
-    WHEN "Name" = 'Margherita' AND "Size" = 'Srednja' THEN 6.50
-    WHEN "Name" = 'Margherita' AND "Size" = 'Velika' THEN 7.80
+   -- Margherita
+   WHEN "Name" = 'Margherita' AND "Size" = 'Mala' THEN 5.40
+   WHEN "Name" = 'Margherita' AND "Size" = 'Srednja' THEN 6.50
+   WHEN "Name" = 'Margherita' AND "Size" = 'Velika' THEN 7.80
 
-    -- Capricciosa
-    WHEN "Name" = 'Capricciosa' AND "Size" = 'Mala' THEN 7.10
-    WHEN "Name" = 'Capricciosa' AND "Size" = 'Srednja' THEN 8.50
-    WHEN "Name" = 'Capricciosa' AND "Size" = 'Velika' THEN 9.90
+   -- Capricciosa
+   WHEN "Name" = 'Capricciosa' AND "Size" = 'Mala' THEN 7.10
+   WHEN "Name" = 'Capricciosa' AND "Size" = 'Srednja' THEN 8.50
+   WHEN "Name" = 'Capricciosa' AND "Size" = 'Velika' THEN 9.90
 
-    -- Pepperoni
-    WHEN "Name" = 'Pepperoni' AND "Size" = 'Mala' THEN 6.50
-    WHEN "Name" = 'Pepperoni' AND "Size" = 'Srednja' THEN 7.80
-    WHEN "Name" = 'Pepperoni' AND "Size" = 'Velika' THEN 9.10
+   -- Pepperoni
+   WHEN "Name" = 'Pepperoni' AND "Size" = 'Mala' THEN 6.50
+   WHEN "Name" = 'Pepperoni' AND "Size" = 'Srednja' THEN 7.80
+   WHEN "Name" = 'Pepperoni' AND "Size" = 'Velika' THEN 9.10
 
-    -- Vegetariana
-    WHEN "Name" = 'Vegetariana' AND "Size" = 'Mala' THEN 5.90
-    WHEN "Name" = 'Vegetariana' AND "Size" = 'Srednja' THEN 7.10
-    WHEN "Name" = 'Vegetariana' AND "Size" = 'Velika' THEN 8.30
+   -- Vegetariana
+   WHEN "Name" = 'Vegetariana' AND "Size" = 'Mala' THEN 5.90
+   WHEN "Name" = 'Vegetariana' AND "Size" = 'Srednja' THEN 7.10
+   WHEN "Name" = 'Vegetariana' AND "Size" = 'Velika' THEN 8.30
 
-    -- Quattro Formaggi
-    WHEN "Name" = 'Quattro Formaggi' AND "Size" = 'Mala' THEN 7.60
-    WHEN "Name" = 'Quattro Formaggi' AND "Size" = 'Srednja' THEN 8.80
-    WHEN "Name" = 'Quattro Formaggi' AND "Size" = 'Velika' THEN 9.20
+   -- Quattro Formaggi
+   WHEN "Name" = 'Quattro Formaggi' AND "Size" = 'Mala' THEN 7.60
+   WHEN "Name" = 'Quattro Formaggi' AND "Size" = 'Srednja' THEN 8.80
+   WHEN "Name" = 'Quattro Formaggi' AND "Size" = 'Velika' THEN 9.20
 
-    -- Funghi
-    WHEN "Name" = 'Funghi' AND "Size" = 'Mala' THEN 5.80
-    WHEN "Name" = 'Funghi' AND "Size" = 'Srednja' THEN 7.00
-    WHEN "Name" = 'Funghi' AND "Size" = 'Velika' THEN 8.40
+   -- Funghi
+   WHEN "Name" = 'Funghi' AND "Size" = 'Mala' THEN 5.80
+   WHEN "Name" = 'Funghi' AND "Size" = 'Srednja' THEN 7.00
+   WHEN "Name" = 'Funghi' AND "Size" = 'Velika' THEN 8.40
 
-    -- Hawaiian
-    WHEN "Name" = 'Hawaiian' AND "Size" = 'Mala' THEN 7.40
-    WHEN "Name" = 'Hawaiian' AND "Size" = 'Srednja' THEN 8.90
-    WHEN "Name" = 'Hawaiian' AND "Size" = 'Velika' THEN 10.50
+   -- Hawaiian
+   WHEN "Name" = 'Hawaiian' AND "Size" = 'Mala' THEN 7.40
+   WHEN "Name" = 'Hawaiian' AND "Size" = 'Srednja' THEN 8.90
+   WHEN "Name" = 'Hawaiian' AND "Size" = 'Velika' THEN 10.50
 
-    -- Diavola
-    WHEN "Name" = 'Diavola' AND "Size" = 'Mala' THEN 6.90
-    WHEN "Name" = 'Diavola' AND "Size" = 'Srednja' THEN 8.20
-    WHEN "Name" = 'Diavola' AND "Size" = 'Velika' THEN 9.60
+   -- Diavola
+   WHEN "Name" = 'Diavola' AND "Size" = 'Mala' THEN 6.90
+   WHEN "Name" = 'Diavola' AND "Size" = 'Srednja' THEN 8.20
+   WHEN "Name" = 'Diavola' AND "Size" = 'Velika' THEN 9.60
 
-    -- BBQ Chicken
-    WHEN "Name" = 'BBQ Chicken' AND "Size" = 'Mala' THEN 7.90
-    WHEN "Name" = 'BBQ Chicken' AND "Size" = 'Srednja' THEN 9.50
-    WHEN "Name" = 'BBQ Chicken' AND "Size" = 'Velika' THEN 11.10
+   -- BBQ Chicken
+   WHEN "Name" = 'BBQ Chicken' AND "Size" = 'Mala' THEN 7.90
+   WHEN "Name" = 'BBQ Chicken' AND "Size" = 'Srednja' THEN 9.50
+   WHEN "Name" = 'BBQ Chicken' AND "Size" = 'Velika' THEN 11.10
 
-    -- Tuna
-    WHEN "Name" = 'Tuna' AND "Size" = 'Mala' THEN 6.70
-    WHEN "Name" = 'Tuna' AND "Size" = 'Srednja' THEN 8.00
-    WHEN "Name" = 'Tuna' AND "Size" = 'Velika' THEN 9.30
+   -- Tuna
+   WHEN "Name" = 'Tuna' AND "Size" = 'Mala' THEN 6.70
+   WHEN "Name" = 'Tuna' AND "Size" = 'Srednja' THEN 8.00
+   WHEN "Name" = 'Tuna' AND "Size" = 'Velika' THEN 9.30
 
-    ELSE "Price"
+   ELSE "Price"
 END;
-
-DELETE FROM "PizzaItems"
-WHERE "PizzaId" IN ( '678a103b-5b0e-4081-93d6-a84b3814fb0b', '3961343c-2e25-40d2-b6e3-7907841094c3', '52c4818a-8962-48c6-8e30-42e3dbb56451',
-'e4f9632d-d01f-4f10-9354-24887023f812', 'd8c2f41d-9db3-4b17-9dd8-8765cc3ee94a', '8e82a425-5507-4b00-b31b-3fb5616d07e3', '0ac9a045-4ae5-47ed-ae9a-c30abc838686',
-'61b508be-9f44-445b-8acf-95fa053458d0', 'cd1ba09e-9260-4b19-ba69-97746033bd09', '75ce1adc-73ba-40d5-ab45-760567955712',
-'ccbbc48f-f38a-4446-886f-27a5d457a45c', 'd48b7155-4f17-48be-a8b1-215b1ee2c252', '19a66de3-7574-4522-881c-27f31f94ea0e',
-'9a49cf3d-25ef-4a9f-bf5d-2d63928bc496', '8442b253-077d-4409-a509-2c3f9e6983c9', '5156c78f-cdff-4430-99a5-3e9dd7d77926',
-'5a9551b8-09fd-485c-8284-7558c35aa83f', '6fb9ad88-6c18-4a30-ba58-8ea3c337f95b', '80efc928-52ca-4774-bebf-61b218cbf950',
-'67f46a5e-bd19-49f7-a1e4-31314235247f', '1f303d68-7777-44d3-ba31-4cc55fe4a8f3', '5fc9e4fb-7654-4330-bb87-a45493b8be97',
-'82d55cae-e799-4b16-a703-38425a25ee0f', '2483076d-8f34-4101-b748-a52f0ba66703', '8552b1b3-91c9-4dc5-96ae-6eb1de48e2e3',
-'5b19198e-63cd-4717-9fc1-86fe37177a2a', '89b4fe85-7f49-41ad-ab2e-7f9a1f8eb36e', '0a31fb30-2dba-4081-9003-ae110b8145db',
-'454cf78b-d139-4d85-88d0-882a0db95ca6', '38b5fd29-f658-44ae-a5bb-dbe0c0b9cde1', '4486501a-ce84-4950-87de-e3c7c06e0f6f');
-
-DELETE FROM "PizzaItems"
-WHERE "PizzaId" IN ('1db21468-8819-458a-b3c9-dd90ba05d86b', 'f0c7369f-711a-4418-aa7a-45d7f9a2cf96', 'eb66ac3b-ef40-44c1-ac52-7faa37925ad3');
-ALTER TABLE "PizzaItems"
-ADD COLUMN "IsVegetarian" BOOLEAN;
-
 
 UPDATE "PizzaItems"
 SET "IsVegetarian" = TRUE
@@ -272,10 +248,10 @@ WHERE "Name" IN ('Hawaiian', 'Diavola', 'BBQ Chicken', 'Tuna');
 SELECT * FROM "PizzaItems";
 
 CREATE TABLE "Drinks" (
-    "DrinkId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    "Name" VARCHAR(100) NOT NULL,
-    "Size" VARCHAR(20),  -- npr. "0.5L", "1L", "0.33L"
-    "Price" NUMERIC(10, 2) NOT NULL
+   "DrinkId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   "Name" VARCHAR(100) NOT NULL,
+   "Size" VARCHAR(20),  -- npr. "0.5L", "1L", "0.33L"
+   "Price" NUMERIC(10, 2) NOT NULL
 );
 
 ALTER TABLE "Drinks"
@@ -302,13 +278,12 @@ INSERT INTO "Drinks" ("Name", "Size", "Price") VALUES
 ('Sensation Limeta-Kiwi', '0.5L', 2.20);
 
 SELECT * FROM "Drinks";
-DROP TABLE "DrinkOrderItems";
 SELECT * FROM "DrinkOrderItems";
 
 ALTER TABLE "DrinkOrderItems"
 ADD COLUMN "CardPaymentTransactionId" VARCHAR(255);
 
--- Pronađi tablice koje sadrže CardPaymentTransactionId
+
 SELECT table_name, column_name
 FROM information_schema.columns
 WHERE column_name = 'CardPaymentTransactionId';
@@ -316,25 +291,17 @@ WHERE column_name = 'CardPaymentTransactionId';
 ALTER TABLE "DrinkOrderItems"
 DROP COLUMN IF EXISTS "CardPaymentTransactionId";
 
-
-
-
 CREATE TABLE "DrinkOrderItems" (
-    "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    "OrderId" UUID NOT NULL,
-    "DrinkId" UUID NOT NULL,
-    "Quantity" INT NOT NULL,
-    "UnitPrice" NUMERIC(10,2) NOT NULL,
-    "TotalCost" NUMERIC(10,2) GENERATED ALWAYS AS ("Quantity" * "UnitPrice") STORED,
-    FOREIGN KEY ("OrderId") REFERENCES "DrinksOrders"("OrderId") ON DELETE CASCADE,
-    FOREIGN KEY ("DrinkId") REFERENCES "Drinks"("DrinkId") ON DELETE CASCADE
+   "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   "OrderId" UUID NOT NULL,
+   "DrinkId" UUID NOT NULL,
+   "Quantity" INT NOT NULL,
+   "UnitPrice" NUMERIC(10,2) NOT NULL,
+   "TotalCost" NUMERIC(10,2) GENERATED ALWAYS AS ("Quantity" * "UnitPrice") STORED,
+   FOREIGN KEY ("OrderId") REFERENCES "DrinksOrders"("OrderId") ON DELETE CASCADE,
+   FOREIGN KEY ("DrinkId") REFERENCES "Drinks"("DrinkId") ON DELETE CASCADE
 );
 
---ALTER TABLE "DrinkOrderItems"
---DROP CONSTRAINT IF EXISTS drinkorderitems_orderid_fkey;
-
---ALTER TABLE "DrinkOrderItems"
---ADD CONSTRAINT drinkorderitems_orderid_fkey FOREIGN KEY ("OrderId") REFERENCES "DrinksOrders"("OrderId") ON DELETE CASCADE;
 
 INSERT INTO "DrinkOrderItems" ("OrderId", "DrinkId", "Quantity", "UnitPrice")
 VALUES ('f09686a5-9ea1-4023-8556-b2003fb16f4c', 'e604a312-1635-4bc6-90a0-1abdc87d617c', 1, 2.00);
@@ -350,27 +317,27 @@ SELECT * FROM pizza_orders;
 
 
 CREATE TABLE "PizzaOrders" (
-    "OrderId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    "UserId" UUID NOT NULL,
-    "OrderDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ("UserId") REFERENCES "Users"("Id") ON DELETE CASCADE
+   "OrderId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   "UserId" UUID NOT NULL,
+   "OrderDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   FOREIGN KEY ("UserId") REFERENCES "Users"("Id") ON DELETE CASCADE
 );
 
 CREATE TABLE "DrinksOrders" (
-    "OrderId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    "UserId" UUID NOT NULL,
-    "OrderDate" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ("UserId") REFERENCES "Users"("Id") ON DELETE CASCADE
+   "OrderId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   "UserId" UUID NOT NULL,
+   "OrderDate" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   FOREIGN KEY ("UserId") REFERENCES "Users"("Id") ON DELETE CASCADE
 	);
 
 ALTER TABLE "DrinksOrders" RENAME TO drinks_orders;
 
 INSERT INTO "DrinksOrders" ("UserId") VALUES
 ('02705186-7608-4e49-bd0e-450e7253735c'),
- ('89a819e1-ac2a-41e8-98ff-516d1b994b87');
+('89a819e1-ac2a-41e8-98ff-516d1b994b87');
 
- SELECT * FROM "DrinksOrders";
- select * from drinks_orders;
+SELECT * FROM "DrinksOrders";
+select * from drinks_orders;
 INSERT INTO "PizzaOrders" ("UserId") VALUES
 ('8545b460-fec0-46ce-af3b-3b0f4644c699'),  -- Ana
 ('670dffdc-a4dd-47d2-8aac-be8bb00452e4'),  -- Ivan
@@ -383,13 +350,13 @@ ADD COLUMN "CardPaymentTransactionId" VARCHAR(100);
 select * from "PizzaOrders";
 
 CREATE TABLE "PizzaOrderItems" (
-    "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    "OrderId" UUID NOT NULL,
-    "PizzaId" UUID NOT NULL,
-    "Quantity" INT NOT NULL,
-    "UnitPrice" NUMERIC(10, 2) NOT NULL,
-    FOREIGN KEY ("OrderId") REFERENCES "PizzaOrders"("OrderId") ON DELETE CASCADE,
-    FOREIGN KEY ("PizzaId") REFERENCES "PizzaItems"("PizzaId") ON DELETE CASCADE
+   "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   "OrderId" UUID NOT NULL,
+   "PizzaId" UUID NOT NULL,
+   "Quantity" INT NOT NULL,
+   "UnitPrice" NUMERIC(10, 2) NOT NULL,
+   FOREIGN KEY ("OrderId") REFERENCES "PizzaOrders"("OrderId") ON DELETE CASCADE,
+   FOREIGN KEY ("PizzaId") REFERENCES "PizzaItems"("PizzaId") ON DELETE CASCADE
 );
 
 INSERT INTO "PizzaOrderItems" ("OrderId", "PizzaId", "Quantity", "UnitPrice") VALUES
@@ -400,15 +367,15 @@ INSERT INTO "PizzaOrderItems" ("OrderId", "PizzaId", "Quantity", "UnitPrice") VA
 ('2e974571-aa60-42f5-9216-c05c7f96ab2b', '86debef5-de65-4a25-aa12-a6b4cb25b48a', 2, 7.80);
 
 INSERT INTO "PizzaOrders" ("UserId")
-VALUES ('670dffdc-a4dd-47d2-8aac-be8bb00452e4')  -- zamijeni s pravim UserId
+VALUES ('670dffdc-a4dd-47d2-8aac-be8bb00452e4')  
 RETURNING "OrderId";
 
 INSERT INTO "PizzaOrders" ("UserId")
-VALUES ('81ee6d58-4a84-4f0b-8539-565e4b55ad07')  -- zamijeni s pravim UserId
+VALUES ('81ee6d58-4a84-4f0b-8539-565e4b55ad07')  
 RETURNING "OrderId";
 
 INSERT INTO "PizzaOrders" ("UserId")
-VALUES ('72926c3a-855f-45d9-812a-e8c8faafeecf')  -- zamijeni s pravim UserId
+VALUES ('72926c3a-855f-45d9-812a-e8c8faafeecf')  
 RETURNING "OrderId";
 
 
@@ -422,11 +389,11 @@ SELECT "PizzaId", "Name", "Size" FROM "PizzaItems";
 
 --inner join
 SELECT 
-    po."OrderId",
-    u."Name" AS "UserName",
-    pi."Name" AS "PizzaName",
-    poi."Quantity",
-    poi."UnitPrice"
+   po."OrderId",
+   u."Name" AS "UserName",
+   pi."Name" AS "PizzaName",
+   poi."Quantity",
+   poi."UnitPrice"
 FROM "PizzaOrders" po
 INNER JOIN "Users" u ON po."UserId" = u."Id"
 INNER JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
@@ -434,11 +401,11 @@ INNER JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
 
 --left join
 SELECT 
-    po."OrderId",
-    u."Name" AS "UserName",
-    pi."Name" AS "PizzaName",
-    poi."Quantity",
-    poi."UnitPrice"
+   po."OrderId",
+   u."Name" AS "UserName",
+   pi."Name" AS "PizzaName",
+   poi."Quantity",
+   poi."UnitPrice"
 FROM "PizzaOrders" po
 LEFT JOIN "Users" u ON po."UserId" = u."Id"
 LEFT JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
@@ -446,22 +413,22 @@ LEFT JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
 
 --right join
 SELECT 
-    po."OrderId",
-    u."Name" AS "UserName",
-    pi."Name" AS "PizzaName",
-    poi."Quantity",
-    poi."UnitPrice"
+   po."OrderId",
+   u."Name" AS "UserName",
+   pi."Name" AS "PizzaName",
+   poi."Quantity",
+   poi."UnitPrice"
 FROM "PizzaOrderItems" poi
 RIGHT JOIN pizza_orders po ON poi."OrderId" = po."OrderId"
 RIGHT JOIN "Users" u ON po."UserId" = u."Id"
 RIGHT JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
 
 SELECT 
-    po."OrderId", po."OrderDate",
-    u."Id" as UserId, u."Name", u."Email", u."Age",
-    up."PhoneNumber", up."Address",
-    poi."OrderItemId", poi."Quantity", poi."UnitPrice",
-    pi."PizzaId", pi."Name" as PizzaName, pi."Size", pi."Price", pi."IsVegetarian"
+   po."OrderId", po."OrderDate",
+   u."Id" as UserId, u."Name", u."Email", u."Age",
+   up."PhoneNumber", up."Address",
+   poi."OrderItemId", poi."Quantity", poi."UnitPrice",
+   pi."PizzaId", pi."Name" as PizzaName, pi."Size", pi."Price", pi."IsVegetarian"
 FROM "PizzaOrders" po
 JOIN "Users" u ON po."UserId" = u."Id"
 LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
@@ -475,7 +442,7 @@ SELECT u."Id", u."Name", u."Email", u."Age", up."UserId", up."PhoneNumber", up."
 FROM "Users" u
 LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
 WHERE 1=1
--- (tu ide ostatak WHERE i ORDER BY itd.)
+
 
 SELECT * FROM "DrinksOrders";
 SELECT * FROM "DrinkOrderItems";
@@ -484,18 +451,18 @@ SELECT * FROM "UserProfiles";
 SELECT * FROM "Drinks";
 
 
-    SELECT
-        dr."OrderId", dr."OrderDate",
-        u."Id", u."Name", u."Email", u."Age",
-        up."PhoneNumber", up."Address",
-        doi."OrderItemId", doi."Quantity", doi."UnitPrice",
-        d."DrinkId", d."Name", d."Size", d."Price"
-    FROM "DrinksOrders" dr
-    JOIN "Users" u ON dr."UserId" = u."Id"
-    LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
-    JOIN "DrinkOrderItems" doi ON dr."OrderId" = doi."OrderId"
-    JOIN "Drinks" d ON doi."DrinkId" = d."DrinkId"
-    ORDER BY dr."OrderDate", dr."OrderId";
+   SELECT
+       dr."OrderId", dr."OrderDate",
+       u."Id", u."Name", u."Email", u."Age",
+       up."PhoneNumber", up."Address",
+       doi."OrderItemId", doi."Quantity", doi."UnitPrice",
+       d."DrinkId", d."Name", d."Size", d."Price"
+   FROM "DrinksOrders" dr
+   JOIN "Users" u ON dr."UserId" = u."Id"
+   LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
+   JOIN "DrinkOrderItems" doi ON dr."OrderId" = doi."OrderId"
+   JOIN "Drinks" d ON doi."DrinkId" = d."DrinkId"
+   ORDER BY dr."OrderDate", dr."OrderId";
 
 	SELECT dr."OrderId", dr."OrderDate"
 FROM "DrinksOrders" dr
@@ -503,15 +470,15 @@ LIMIT 5;
 
 
 SELECT
-    o."OrderId", 
-    o."UserId", 
-    o."OrderDate",
-    u."Id", u."Name", u."Email", u."Age",
-    up."UserId" AS "ProfileUserId",    -- OVO DODAJ za profile.UserId
-    up."PhoneNumber", 
-    up."Address",
-    i."OrderItemId", i."DrinkId", i."Quantity", i."UnitPrice", i."TotalCost",
-    d."DrinkId", d."Name" AS "DrinkName", d."Size", d."Price"
+   o."OrderId", 
+   o."UserId", 
+   o."OrderDate",
+   u."Id", u."Name", u."Email", u."Age",
+   up."UserId" AS "ProfileUserId",    -- OVO DODAJ za profile.UserId
+   up."PhoneNumber", 
+   up."Address",
+   i."OrderItemId", i."DrinkId", i."Quantity", i."UnitPrice", i."TotalCost",
+   d."DrinkId", d."Name" AS "DrinkName", d."Size", d."Price"
 FROM "DrinksOrders" o
 JOIN "Users" u ON o."UserId" = u."Id"
 LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
@@ -520,58 +487,20 @@ LEFT JOIN "Drinks" d ON i."DrinkId" = d."DrinkId"
 ORDER BY o."OrderDate", o."OrderId";
 
 
--- SELECT *
--- FROM "UserProfiles"
--- WHERE "UserId" = '00000000-0000-0000-0000-000000000000';
-
-
--- SELECT
---     o."OrderId",  
---     o."UserId" AS "OrderUserId", 
---     o."OrderDate",
-
---     u."Id" AS "UserId", 
---     u."Name" AS "UserName", 
---     u."Email" AS "UserEmail", 
---     u."Age" AS "UserAge",
-
---     up."UserId" AS "ProfileUserId", 
---     up."PhoneNumber", 
---     up."Address",
-
---     i."OrderItemId", 
---     i."OrderId" AS "ItemOrderId",  -- 👈 OVO DODAJ!
---     i."DrinkId", 
---     i."Quantity", 
---     i."UnitPrice", 
---     i."UnitPrice" * i."Quantity" AS "TotalCost", -- ako baš želiš ovo u SQL-u
-
---     d."DrinkId" AS "DrinkId", 
---     d."Name" AS "DrinkName", 
---     d."Size" AS "DrinkSize",  
---     d."Price" AS "DrinkPrice"
-
--- FROM "DrinksOrders" o
--- JOIN "Users" u ON o."UserId" = u."Id"
--- LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
--- LEFT JOIN "DrinkOrderItems" i ON o."OrderId" = i."OrderId"
--- LEFT JOIN "Drinks" d ON i."DrinkId" = d."DrinkId"
--- ORDER BY o."OrderDate", o."OrderId";
-
 SELECT
-    o."OrderId",
-    o."OrderDate",
+   o."OrderId",
+   o."OrderDate",
 
-    u."Id" AS "UserId",
-    u."Name",
-    u."Email",
+   u."Id" AS "UserId",
+   u."Name",
+   u."Email",
 
-    i."OrderItemId",
-    i."DrinkId",
-    i."Quantity",
-    i."UnitPrice",
+   i."OrderItemId",
+   i."DrinkId",
+   i."Quantity",
+   i."UnitPrice",
 
-    d."Name" AS "DrinkName"
+   d."Name" AS "DrinkName"
 FROM "DrinksOrders" o
 JOIN "Users" u ON o."UserId" = u."Id"
 LEFT JOIN "DrinkOrderItems" i ON o."OrderId" = i."OrderId"
@@ -580,25 +509,12 @@ ORDER BY o."OrderDate", o."OrderId";
 
 SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
 
--- SELECT
---     po."OrderId", po."OrderDate",
---     u."Id", u."Name", u."Email", u."Age",
---     up."PhoneNumber", up."Address",
---     poi."OrderItemId", poi."Quantity", poi."UnitPrice",
---     p."PizzaId", p."Name", p."Size", p."Price"
--- FROM "PizzaOrders" po
--- JOIN "Users" u ON po."UserId" = u."Id"
--- LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
--- JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
--- JOIN "PizzaItems" p ON poi."PizzaId" = p."PizzaId"
--- ORDER BY po."OrderDate", po."OrderId"
-
 SELECT
-    po."OrderId", po."OrderDate",
-    u."Id", u."Name", u."Email", u."Age",
-    up."PhoneNumber", up."Address",
-    poi."OrderItemId", poi."Quantity", poi."UnitPrice",
-    p."PizzaId", p."Name", p."Size", p."Price", p."IsVegetarian"
+   po."OrderId", po."OrderDate",
+   u."Id", u."Name", u."Email", u."Age",
+   up."PhoneNumber", up."Address",
+   poi."OrderItemId", poi."Quantity", poi."UnitPrice",
+   p."PizzaId", p."Name", p."Size", p."Price", p."IsVegetarian"
 FROM "PizzaOrders" po
 JOIN "Users" u ON po."UserId" = u."Id"
 LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
@@ -610,11 +526,11 @@ SELECT * FROM "Users";
 SELECT * FROM "Drinks";
 
 SELECT
-  dr."OrderId", dr."OrderDate",
-  u."Id", u."Name", u."Email", u."Age",
-  up."PhoneNumber", up."Address",
-  doi."OrderItemId", doi."Quantity", doi."UnitPrice",
-  d."DrinkId", d."Name", d."Size", d."Price"
+ dr."OrderId", dr."OrderDate",
+ u."Id", u."Name", u."Email", u."Age",
+ up."PhoneNumber", up."Address",
+ doi."OrderItemId", doi."Quantity", doi."UnitPrice",
+ d."DrinkId", d."Name", d."Size", d."Price"
 FROM "DrinksOrders" dr
 JOIN "Users" u ON dr."UserId" = u."Id"
 LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
@@ -623,17 +539,16 @@ JOIN "Drinks" d ON doi."DrinkId" = d."DrinkId"
 ORDER BY dr."OrderDate", dr."OrderId";
 
 CREATE TABLE payment_methods (
-  payment_method_id SERIAL PRIMARY KEY,
-  name VARCHAR(50) NOT NULL UNIQUE
+ payment_method_id SERIAL PRIMARY KEY,
+ name VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE payments (
-  payment_id SERIAL PRIMARY KEY,
-  order_id UUID NOT NULL,
-  payment_method_id INT NOT NULL,
-  amount NUMERIC(10,2) NOT NULL,
-  payment_date TIMESTAMP NOT NULL DEFAULT NOW()
-  -- Ne možemo staviti FOREIGN KEY na order_id jer se može nalaziti u dvije različite tablice
+ payment_id SERIAL PRIMARY KEY,
+ order_id UUID NOT NULL,
+ payment_method_id INT NOT NULL,
+ amount NUMERIC(10,2) NOT NULL,
+ payment_date TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 select * from payment_methods;
@@ -643,14 +558,14 @@ ALTER TABLE payments
 ADD COLUMN order_type VARCHAR(20);
 
 
--- Za pizzu:
+
 SELECT p.*, po.*
 FROM payments p
 JOIN pizza_orders po ON p.order_id = po."OrderId"
 WHERE p.order_type = 'pizza';
 
 
--- Za piće:
+
 SELECT p.*, d.*
 FROM payments p
 JOIN drinks_orders d ON p.order_id = d."OrderId";
@@ -669,20 +584,19 @@ INSERT INTO payments (order_id, payment_method_id, amount, payment_date, order_t
 
 ALTER TABLE payments ADD COLUMN order_type VARCHAR(20);
 
-drop table payments;
 
 SELECT 
-    p.order_id,
-    p.amount,
-    p.payment_date,
-    p.order_type,
-    po."UserId" AS pizza_user_id,
-    d."UserId" AS drink_user_id
+   p.order_id,
+   p.amount,
+   p.payment_date,
+   p.order_type,
+   po."UserId" AS pizza_user_id,
+   d."UserId" AS drink_user_id
 FROM "payments" p
 LEFT JOIN pizza_orders po 
-    ON p.order_id = po."OrderId" AND p.order_type = 'pizza'
+   ON p.order_id = po."OrderId" AND p.order_type = 'pizza'
 LEFT JOIN drinks_orders d 
-    ON p.order_id = d."OrderId" AND p.order_type = 'drink';
+   ON p.order_id = d."OrderId" AND p.order_type = 'drink';
 
 SELECT table_name
 FROM information_schema.tables
@@ -708,12 +622,12 @@ FROM drinks_orders
 WHERE "OrderId" = 'f09686a5-9ea1-4023-8556-b2003fb16f4c';
 
 CREATE TABLE notifications (
-    notification_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL,
-    message TEXT NOT NULL,
-    is_read BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    link TEXT NULL
+   notification_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+   user_id UUID NOT NULL,
+   message TEXT NOT NULL,
+   is_read BOOLEAN NOT NULL DEFAULT FALSE,
+   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+   link TEXT NULL
 );
 
 CREATE INDEX idx_notifications_user_id ON notifications(user_id);
@@ -734,16 +648,16 @@ HAVING COUNT(*) > 1;
 
 
 WITH duplicates AS (
-    SELECT
-        "Id",
-        "Email",
-        ROW_NUMBER() OVER (PARTITION BY "Email" ORDER BY "Id") AS rn
-    FROM "Users"
+   SELECT
+       "Id",
+       "Email",
+       ROW_NUMBER() OVER (PARTITION BY "Email" ORDER BY "Id") AS rn
+   FROM "Users"
 )
 UPDATE "Users" u
 SET "Username" = CASE
-    WHEN d.rn = 1 THEN d."Email"
-    ELSE d."Email" || '_' || d.rn::text
+   WHEN d.rn = 1 THEN d."Email"
+   ELSE d."Email" || '_' || d.rn::text
 END
 FROM duplicates d
 WHERE u."Id" = d."Id";
@@ -773,36 +687,34 @@ UPDATE "Users" SET "PasswordHash" = '' WHERE "PasswordHash" IS NULL;
 
 ALTER TABLE "Users"
 ALTER COLUMN "PasswordHash" SET NOT NULL;
- select * from "Users";
-
+select * from "Users";
 
 
 SELECT
-    column_name,
-    data_type,
-    is_nullable,
-    column_default
+   column_name,
+   data_type,
+   is_nullable,
+   column_default
 FROM
-    information_schema.columns
+   information_schema.columns
 WHERE
-    table_schema = 'public'  -- ili zamijeni s tvojim schema-om ako nije 'public'
-    AND table_name = 'Users' -- ime tvoje tablice, pazi na velika/mala slova
+   table_schema = 'public'  
+   AND table_name = 'Users' 
 ORDER BY
-    ordinal_position;
+   ordinal_position;
 
 select * from "Users";
 
 ALTER TABLE "Users" DROP COLUMN "Username";
--- ili ako želiš zadržati, ali nije obavezno:
 ALTER TABLE "Users" ALTER COLUMN "Username" DROP NOT NULL;
 ALTER TABLE "Users" DROP COLUMN "PasswordHash";
 
 UPDATE "PizzaItems"
 SET "Size" = CASE "Size"
-    WHEN 'Mala' THEN 'small'
-    WHEN 'Srednja' THEN 'medium'
-    WHEN 'Velika' THEN 'large'
-    ELSE "Size" -- ostavi ostale vrijednosti nepromijenjene
+   WHEN 'Mala' THEN 'small'
+   WHEN 'Srednja' THEN 'medium'
+   WHEN 'Velika' THEN 'large'
+   ELSE "Size" 
 END
 WHERE "Size" IN ('Mala', 'Srednja', 'Velika');
 

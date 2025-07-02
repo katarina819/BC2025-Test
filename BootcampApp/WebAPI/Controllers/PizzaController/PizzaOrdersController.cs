@@ -9,6 +9,9 @@ using BootcampApp.Service.BootcampApp.Service.PizzaService;
 
 namespace WebAPI.Controllers
 {
+    /// <summary>
+    /// Controller for handling pizza orders.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class PizzaOrdersController : ControllerBase
@@ -16,64 +19,57 @@ namespace WebAPI.Controllers
         private readonly IPizzaService _pizzaService;
         private readonly IPizzaOrderService _pizzaOrderService;
 
-
+        /// <summary>
+        /// Initializes a new instance of <see cref="PizzaOrdersController"/>.
+        /// </summary>
+        /// <param name="pizzaService">Service to manage pizzas.</param>
+        /// <param name="pizzaOrderService">Service to manage pizza orders.</param>
         public PizzaOrdersController(IPizzaService pizzaService, IPizzaOrderService pizzaOrderService)
         {
             _pizzaService = pizzaService;
             _pizzaOrderService = pizzaOrderService;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetOrders()
-        //{
-        //    var orders = await _pizzaOrderService.GetAllOrdersWithDetailsAsync();
+        /*
+        // Uncomment and document these methods if needed:
 
+        /// <summary>
+        /// Gets all pizza orders with details.
+        /// </summary>
+        /// <returns>List of pizza orders including items and user info.</returns>
+        [HttpGet]
+        public async Task<IActionResult> GetOrders()
+        {
+            // Implementation...
+        }
 
-        //    var ordersREST = orders.Select(o => new PizzaOrderREST
-        //    {
-        //        OrderId = o.OrderId,
-        //        OrderDate = o.OrderDate,
-        //        User = new UserREST
-        //        {
-        //            Id = o.User.Id,
-        //            Name = o.User.Name,
-        //            Email = o.User.Email,
-        //            Age = o.User.Age,
-        //            Profile = o.User.Profile == null ? null : new UserProfileREST
-        //            {
-        //                PhoneNumber = o.User.Profile.PhoneNumber,
-        //                Address = o.User.Profile.Address
-        //            }
-        //        },
-        //        Items = o.Items.Select(i => new PizzaOrderItemREST
-        //        {
-        //            OrderItemId = i.OrderItemId,
-        //            Quantity = i.Quantity,
-        //            UnitPrice = i.UnitPrice,
-        //            Pizza = i.Pizza == null ? null : new PizzaItemREST
-        //            {
-        //                PizzaId = i.Pizza.PizzaId,
-        //                Name = i.Pizza.Name,
-        //                Size = i.Pizza.Size,
-        //                Price = i.Pizza.Price,
-        //                IsVegetarian = i.Pizza.IsVegetarian
-        //            }
+        /// <summary>
+        /// Gets a pizza order by its ID.
+        /// </summary>
+        /// <param name="id">Order ID.</param>
+        /// <returns>Pizza order details or NotFound.</returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderById(Guid id)
+        {
+            // Implementation...
+        }
 
-        //        }).ToList()
-        //    });
+        /// <summary>
+        /// Deletes a pizza order by its ID.
+        /// </summary>
+        /// <param name="id">Order ID.</param>
+        /// <returns>NoContent if deleted, NotFound otherwise.</returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOrder(Guid id)
+        {
+            // Implementation...
+        }
+        */
 
-        //    return Ok(ordersREST);
-        //}
-
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetOrderById(Guid id)
-        //{
-        //    var order = await _pizzaOrderService.GetOrderByIdAsync(id);
-        //    if (order == null) return NotFound();
-        //    return Ok(order); 
-        //}
-
-
+        /// <summary>
+        /// Retrieves all available pizzas.
+        /// </summary>
+        /// <returns>List of pizzas.</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PizzaItem>>> GetAll()
         {
@@ -81,7 +77,11 @@ namespace WebAPI.Controllers
             return Ok(pizzas);
         }
 
-
+        /// <summary>
+        /// Creates a new pizza order.
+        /// </summary>
+        /// <param name="request">The pizza order creation request containing the items.</param>
+        /// <returns>The created order's ID if successful, otherwise a BadRequest response.</returns>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreatePizzaOrderRequest request)
         {
@@ -93,24 +93,8 @@ namespace WebAPI.Controllers
 
             var createdOrder = await _pizzaOrderService.CreateOrderAsync(request);
 
-            // Vrati orderId u odgovoru:
+            // Return the order ID in the response:
             return Ok(new { orderId = createdOrder.OrderId });
         }
-
-
-
-
-
-
-
-
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteOrder(Guid id)
-        //{
-        //    var success = await _pizzaOrderService.DeleteOrderAsync(id);
-        //    if (!success) return NotFound();
-        //    return NoContent();
-        //}
-
     }
 }

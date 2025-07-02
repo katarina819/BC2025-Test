@@ -8,18 +8,28 @@ using BootcampApp.Service.BootcampApp.Service.PizzaService;
 
 namespace BootcampApp.Controllers
 {
+    /// <summary>
+    /// API controller for managing pizzas.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class PizzaController : ControllerBase
     {
         private readonly IPizzaService _pizzaService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PizzaController"/> class.
+        /// </summary>
+        /// <param name="pizzaService">Service to handle pizza-related operations.</param>
         public PizzaController(IPizzaService pizzaService)
         {
             _pizzaService = pizzaService;
         }
 
-        // GET: api/pizza
+        /// <summary>
+        /// Retrieves all available pizzas.
+        /// </summary>
+        /// <returns>A list of all pizzas.</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PizzaItem>>> GetAll()
         {
@@ -27,7 +37,11 @@ namespace BootcampApp.Controllers
             return Ok(pizzas);
         }
 
-        // GET: api/pizza/{id}
+        /// <summary>
+        /// Retrieves a pizza by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the pizza.</param>
+        /// <returns>The pizza if found; otherwise, NotFound.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<PizzaItem>> GetById(Guid id)
         {

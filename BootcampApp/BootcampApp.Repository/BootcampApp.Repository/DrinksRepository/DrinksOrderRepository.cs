@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BootcampApp.Model;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using static BootcampApp.Model.PizzaOrder;
 
 namespace BootcampApp.Repository
 {
+    /// <summary>
+    /// Repository for managing drinks orders in the database.
+    /// Provides methods to retrieve, create, and delete orders and their items.
+    /// </summary>
     public class DrinksOrderRepository : IDrinksOrderRepository
     {
         private readonly ILogger<DrinksOrderRepository> _logger;
@@ -19,6 +23,11 @@ namespace BootcampApp.Repository
             _logger = logger;
         }
 
+        /// <summary>
+        /// Retrieves a single drinks order by ID, including its associated items.
+        /// </summary>
+        /// <param name="orderId">Unique identifier of the drinks order.</param>
+        /// <returns>The drinks order with its items, or null if not found.</returns>
         public async Task<DrinksOrder?> GetByIdAsync(Guid orderId)
         {
             DrinksOrder? order = null;
@@ -26,11 +35,11 @@ namespace BootcampApp.Repository
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
+            // First, retrieve the basic order information
             const string orderQuery = @"
-    SELECT ""OrderId"", ""UserId"", ""OrderDate"", ""CardPaymentTransactionId""
-    FROM drinks_orders
-    WHERE ""OrderId"" = @OrderId";
-
+                SELECT ""OrderId"", ""UserId"", ""OrderDate"", ""CardPaymentTransactionId""
+                FROM drinks_orders
+                WHERE ""OrderId"" = @OrderId";
 
             await using (var cmd = new NpgsqlCommand(orderQuery, connection))
             {
@@ -50,10 +59,11 @@ namespace BootcampApp.Repository
                 }
                 else
                 {
-                    return null; 
+                    return null; // Order not found
                 }
             }
 
+            // Then, retrieve the associated order items
             const string itemsQuery = @"
                 SELECT ""OrderItemId"", ""OrderId"", ""DrinkId"", ""Quantity"", ""UnitPrice""
                 FROM ""DrinkOrderItems""
@@ -73,7 +83,7 @@ namespace BootcampApp.Repository
                         DrinkId = reader.GetGuid(2),
                         Quantity = reader.GetInt32(3),
                         UnitPrice = reader.GetDecimal(4),
-                        Drink = null! 
+                        Drink = null! // Will be loaded later if needed
                     };
 
                     order.Items.Add(item);
@@ -83,6 +93,10 @@ namespace BootcampApp.Repository
             return order;
         }
 
+        /// <summary>
+        /// Retrieves all drinks orders with their users and drink item details.
+        /// </summary>
+        /// <returns>A list of drinks orders with related data.</returns>
         public async Task<List<DrinksOrder>> GetAllAsync()
         {
             var orders = new List<DrinksOrder>();
@@ -90,34 +104,28 @@ namespace BootcampApp.Repository
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
+            // Complex join to gather orders, user info, order items and drink details
             string sql = @"
-SELECT
-    o.""OrderId"",
-    o.""OrderDate"",
-
-    u.""Id"" AS ""UserId"",
-    u.""Name"",
-    u.""Email"",
-
-    up.""PhoneNumber"",
-    up.""Address"",
-
-    i.""DrinkId"",
-    i.""Quantity"",
-    i.""UnitPrice"",
-
-    d.""Name"" AS ""DrinkName"",
-    d.""Size"",
-    d.""Price""
-FROM drinks_orders o
-JOIN ""Users"" u ON o.""UserId"" = u.""Id""
-LEFT JOIN ""UserProfiles"" up ON u.""Id"" = up.""UserId""
-LEFT JOIN ""DrinkOrderItems"" i ON o.""OrderId"" = i.""OrderId""
-LEFT JOIN ""Drinks"" d ON i.""DrinkId"" = d.""DrinkId""
-ORDER BY o.""OrderDate"", o.""OrderId"";";
-
-
-
+                SELECT
+                    o.""OrderId"",
+                    o.""OrderDate"",
+                    u.""Id"" AS ""UserId"",
+                    u.""Name"",
+                    u.""Email"",
+                    up.""PhoneNumber"",
+                    up.""Address"",
+                    i.""DrinkId"",
+                    i.""Quantity"",
+                    i.""UnitPrice"",
+                    d.""Name"" AS ""DrinkName"",
+                    d.""Size"",
+                    d.""Price""
+                FROM drinks_orders o
+                JOIN ""Users"" u ON o.""UserId"" = u.""Id""
+                LEFT JOIN ""UserProfiles"" up ON u.""Id"" = up.""UserId""
+                LEFT JOIN ""DrinkOrderItems"" i ON o.""OrderId"" = i.""OrderId""
+                LEFT JOIN ""Drinks"" d ON i.""DrinkId"" = d.""DrinkId""
+                ORDER BY o.""OrderDate"", o.""OrderId"";";
 
             await using var command = new NpgsqlCommand(sql, connection);
             await using var reader = await command.ExecuteReaderAsync();
@@ -126,15 +134,16 @@ ORDER BY o.""OrderDate"", o.""OrderId"";";
             {
                 var orderId = reader.GetGuid(reader.GetOrdinal("OrderId"));
 
+                // Check if order already exists in the result set
                 var existingOrder = orders.FirstOrDefault(o => o.OrderId == orderId);
                 if (existingOrder == null)
                 {
+                    // Build user and order only once
                     var user = new User
                     {
                         Id = reader.GetGuid(reader.GetOrdinal("UserId")),
                         Name = reader.GetString(reader.GetOrdinal("Name")),
                         Email = reader.GetString(reader.GetOrdinal("Email")),
-                        
                         Profile = new UserProfile
                         {
                             PhoneNumber = reader.IsDBNull(reader.GetOrdinal("PhoneNumber")) ? "N/A" : reader.GetString(reader.GetOrdinal("PhoneNumber")),
@@ -154,6 +163,7 @@ ORDER BY o.""OrderDate"", o.""OrderId"";";
                     orders.Add(existingOrder);
                 }
 
+                // Add item if it exists
                 if (!reader.IsDBNull(reader.GetOrdinal("DrinkId")))
                 {
                     var drink = new Drink
@@ -166,8 +176,6 @@ ORDER BY o.""OrderDate"", o.""OrderId"";";
 
                     var item = new DrinkOrderItem
                     {
-                        
-                        
                         DrinkId = drink.DrinkId,
                         Quantity = reader.GetInt32(reader.GetOrdinal("Quantity")),
                         UnitPrice = reader.GetDecimal(reader.GetOrdinal("UnitPrice")),
@@ -181,11 +189,11 @@ ORDER BY o.""OrderDate"", o.""OrderId"";";
             return orders;
         }
 
-
-
-
-
-
+        /// <summary>
+        /// Creates a new drinks order with its associated items.
+        /// </summary>
+        /// <param name="order">Order object to insert into the database.</param>
+        /// <returns>Generated order ID.</returns>
         public async Task<Guid> CreateAsync(DrinksOrder order)
         {
             order.OrderId = Guid.NewGuid();
@@ -196,6 +204,7 @@ ORDER BY o.""OrderDate"", o.""OrderId"";";
 
             try
             {
+                // Insert the drinks order
                 var insertOrderCmd = new NpgsqlCommand(@"
                     INSERT INTO drinks_orders (""OrderId"", ""UserId"", ""OrderDate"", ""CardPaymentTransactionId"")
                     VALUES (@OrderId, @UserId, @OrderDate, @CardPaymentTransactionId)", connection, transaction);
@@ -204,11 +213,11 @@ ORDER BY o.""OrderDate"", o.""OrderId"";";
                 insertOrderCmd.Parameters.AddWithValue("UserId", order.UserId);
                 insertOrderCmd.Parameters.AddWithValue("OrderDate", order.OrderDate);
                 insertOrderCmd.Parameters.AddWithValue("CardPaymentTransactionId",
-    (object?)order.CardPaymentTransactionId ?? DBNull.Value);
-
+                    (object?)order.CardPaymentTransactionId ?? DBNull.Value);
 
                 await insertOrderCmd.ExecuteNonQueryAsync();
 
+                // Insert each order item
                 foreach (var item in order.Items)
                 {
                     item.OrderItemId = Guid.NewGuid();
@@ -222,13 +231,11 @@ ORDER BY o.""OrderDate"", o.""OrderId"";";
                     insertItemCmd.Parameters.AddWithValue("DrinkId", item.DrinkId);
                     insertItemCmd.Parameters.AddWithValue("Quantity", item.Quantity);
                     insertItemCmd.Parameters.AddWithValue("UnitPrice", item.UnitPrice);
-                    
 
                     await insertItemCmd.ExecuteNonQueryAsync();
                 }
 
                 await transaction.CommitAsync();
-
                 return order.OrderId;
             }
             catch (Exception ex)
@@ -239,6 +246,11 @@ ORDER BY o.""OrderDate"", o.""OrderId"";";
             }
         }
 
+        /// <summary>
+        /// Deletes a drinks order and all its associated items.
+        /// </summary>
+        /// <param name="orderId">ID of the order to delete.</param>
+        /// <returns>True if the order was deleted; false otherwise.</returns>
         public async Task<bool> DeleteAsync(Guid orderId)
         {
             await using var connection = new NpgsqlConnection(_connectionString);
@@ -247,18 +259,19 @@ ORDER BY o.""OrderDate"", o.""OrderId"";";
 
             try
             {
+                // Delete associated order items
                 var deleteItemsCmd = new NpgsqlCommand(
                     @"DELETE FROM ""DrinkOrderItems"" WHERE ""OrderId"" = @OrderId", connection, transaction);
                 deleteItemsCmd.Parameters.AddWithValue("OrderId", orderId);
                 await deleteItemsCmd.ExecuteNonQueryAsync();
 
+                // Delete the main order
                 var deleteOrderCmd = new NpgsqlCommand(
                     @"DELETE FROM drinks_orders WHERE ""OrderId"" = @OrderId", connection, transaction);
                 deleteOrderCmd.Parameters.AddWithValue("OrderId", orderId);
                 int affected = await deleteOrderCmd.ExecuteNonQueryAsync();
 
                 await transaction.CommitAsync();
-
                 return affected > 0;
             }
             catch (Exception ex)
@@ -267,10 +280,6 @@ ORDER BY o.""OrderDate"", o.""OrderId"";";
                 await transaction.RollbackAsync();
                 throw;
             }
-
-            
         }
-
-   
     }
 }

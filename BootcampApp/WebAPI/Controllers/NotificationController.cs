@@ -3,23 +3,31 @@ using BootcampApp.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-
-
 namespace WebAPI.Controllers
 {
+    /// <summary>
+    /// Controller for managing user notifications.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotificationController"/> class.
+        /// </summary>
+        /// <param name="notificationService">Service to manage notifications.</param>
         public NotificationController(INotificationService notificationService)
         {
             _notificationService = notificationService;
         }
 
-        // GET: api/notification/user/{userId}
+        /// <summary>
+        /// Gets all notifications for a specified user.
+        /// </summary>
+        /// <param name="userId">User's unique identifier.</param>
+        /// <returns>List of notifications or 404 if none found.</returns>
         [HttpGet("users/{userId}/notifications")]
         public async Task<IActionResult> GetUserNotifications(Guid userId)
         {
@@ -29,10 +37,11 @@ namespace WebAPI.Controllers
             return Ok(notifications);
         }
 
-
-
-
-        // POST: api/notification
+        /// <summary>
+        /// Adds a new notification.
+        /// </summary>
+        /// <param name="notification">Notification object to add.</param>
+        /// <returns>Created notification with location header.</returns>
         [HttpPost]
         public async Task<ActionResult> AddNotification([FromBody] Notification notification)
         {
@@ -44,10 +53,13 @@ namespace WebAPI.Controllers
             await _notificationService.AddNotificationAsync(notification);
 
             return CreatedAtAction(nameof(GetUserNotifications), new { userId = notification.UserId }, notification);
-
         }
 
-        // PUT: api/notification/mark-as-read/{id}
+        /// <summary>
+        /// Marks a specific notification as read.
+        /// </summary>
+        /// <param name="id">Notification ID.</param>
+        /// <returns>No content on success.</returns>
         [HttpPut("mark-as-read/{id}")]
         public async Task<ActionResult> MarkAsRead(Guid id)
         {
@@ -55,7 +67,11 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
-        // PUT: api/notification/mark-all-as-read/{userId}
+        /// <summary>
+        /// Marks all notifications for a user as read.
+        /// </summary>
+        /// <param name="userId">User ID.</param>
+        /// <returns>No content on success.</returns>
         [HttpPut("mark-all-as-read/{userId}")]
         public async Task<ActionResult> MarkAllAsRead(Guid userId)
         {
@@ -63,14 +79,16 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: api/notification/{id}
+        /// <summary>
+        /// Deletes a notification by its ID.
+        /// </summary>
+        /// <param name="id">Notification ID.</param>
+        /// <returns>No content on success.</returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
             await _notificationService.DeleteNotificationAsync(id);
             return NoContent();
         }
-
     }
-
 }

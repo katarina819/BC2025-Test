@@ -8,25 +8,30 @@ using BootcampApp.Service.BootcampApp.Service.DrinksService;
 using Npgsql;
 using BootcampApp.Service.BootcampApp.Service.PizzaService;
 
-
+// Register code page provider for text encoding support (e.g. for certain DB encodings)
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Obavezno postavi Autofac kao DI container:
+// Configure Autofac as the Dependency Injection container instead of default Microsoft DI
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
+// Configure the Autofac container with registrations
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
+    // Get connection string from configuration
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                           ?? throw new InvalidOperationException("Connection string not found.");
 
+    // Register the connection string as a singleton string instance
     containerBuilder.RegisterInstance(connectionString).As<string>().SingleInstance();
 
+    // Register NpgsqlConnection with scoped lifetime per request
     containerBuilder.Register(c => new NpgsqlConnection(connectionString))
                     .As<NpgsqlConnection>()
                     .InstancePerLifetimeScope();
 
+    // Register repositories with scoped lifetime
     containerBuilder.RegisterType<NotificationRepository>().As<INotificationRepository>().InstancePerLifetimeScope();
     containerBuilder.RegisterType<PaymentRepository>().AsSelf().InstancePerLifetimeScope();
 
@@ -36,6 +41,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterType<PizzaOrderRepository>().As<IPizzaOrderRepository>().InstancePerLifetimeScope();
     containerBuilder.RegisterType<DrinksOrderRepository>().As<IDrinksOrderRepository>().InstancePerLifetimeScope();
 
+    // Register services with scoped lifetime
     containerBuilder.RegisterType<PaymentService>().AsSelf().InstancePerLifetimeScope();
     containerBuilder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
     containerBuilder.RegisterType<DrinkService>().As<IDrinkService>().InstancePerLifetimeScope();
@@ -45,6 +51,9 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterType<NotificationService>().As<INotificationService>().InstancePerLifetimeScope();
 });
 
+// Add controllers and configure JSON options to:
+// - Ignore circular references to prevent serialization issues
+// - Ignore null values in the JSON output
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -52,32 +61,32 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
     });
 
-
-
+// Configure CORS policy to allow frontend app hosted at localhost:5175 to access this API
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5176")
+        policy.WithOrigins("http://localhost:5178")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); // ➕ Ovo je obavezno za withCredentials
+              .AllowCredentials(); // Required for allowing cookies or credentials to be sent
     });
 });
 
-
+// Add API documentation generator (Swagger)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configure logging to only use console logger, clearing other providers
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-
-
 var app = builder.Build();
 
+// Use CORS policy defined earlier
 app.UseCors("AllowFrontend");
 
+// Development-only middleware: Developer exception page + Swagger UI for API testing
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -85,9 +94,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Enforce HTTPS redirection
 app.UseHttpsRedirection();
 
+// Enable authorization middleware (for [Authorize] attributes if used)
 app.UseAuthorization();
+
+// Map controller routes for incoming requests
 app.MapControllers();
 
+// Run the application
 app.Run();

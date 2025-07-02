@@ -9,8 +9,15 @@ using Microsoft.Extensions.Logging;
 
 namespace BootcampApp.Tests
 {
+    /// <summary>
+    /// Contains unit tests for the <see cref="UserService"/> class.
+    /// </summary>
     public class UserServiceTests
     {
+        /// <summary>
+        /// Tests that <see cref="UserService.GetUserByIdAsync(Guid)"/> returns a user
+        /// when the user with the specified ID exists.
+        /// </summary>
         [Fact]
         public async Task GetUserByIdAsync_ReturnsUser_WhenUserExists()
         {
@@ -31,10 +38,10 @@ namespace BootcampApp.Tests
 
             var userService = new UserService(mockUserRepository.Object, mockLogger);
 
-            
+            // Act
             var result = await userService.GetUserByIdAsync(userId);
 
-            
+            // Assert
             Assert.NotNull(result);
             Assert.Equal(userId, result.Id);
             Assert.Equal("Test User", result.Name);
@@ -42,4 +49,3 @@ namespace BootcampApp.Tests
         }
     }
 }
-

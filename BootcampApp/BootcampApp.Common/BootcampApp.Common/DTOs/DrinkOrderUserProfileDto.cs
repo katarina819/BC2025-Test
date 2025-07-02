@@ -8,7 +8,7 @@ namespace BootcampApp.Common.BootcampApp.Common.DTOs
 {
     public class DrinkOrderUserProfileDto
     {
-       
+
     }
 
 }
