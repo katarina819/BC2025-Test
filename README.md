@@ -18,11 +18,8 @@ dotnet restore
 dotnet build
 ```
 
-
 ## Running the Backend
 
-By default, the backend API runs locally on:
-
-http://localhost:7123
-
+By default, the backend API runs locally on `http://localhost` with a port configured in the project (usually `7123`).  
 Make sure the backend is running before starting the frontend application, so the frontend can successfully communicate with the API.
+
