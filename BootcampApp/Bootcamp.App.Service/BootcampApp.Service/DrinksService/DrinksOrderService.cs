@@ -5,6 +5,9 @@ using BootcampApp.Common.BootcampApp.Common.DTOs;
 using BootcampApp.Model;
 using BootcampApp.Repository;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.SignalR;
+using BootcampApp.SignalR.Hubs;
+
 
 namespace BootcampApp.Service
 {
@@ -14,6 +17,8 @@ namespace BootcampApp.Service
         private readonly IDrinkRepository _drinkRepository;
         private readonly ILogger<DrinksOrderService> _logger;
         private readonly INotificationService _notificationService;
+        private readonly IHubContext<NotificationHub> _hubContext;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DrinksOrderService"/> class.
@@ -26,12 +31,14 @@ namespace BootcampApp.Service
             IDrinksOrderRepository orderRepository,
             IDrinkRepository drinkRepository,
             ILogger<DrinksOrderService> logger,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IHubContext<NotificationHub> hubContext)
         {
             _orderRepository = orderRepository;
             _drinkRepository = drinkRepository;
             _logger = logger;
             _notificationService = notificationService;
+            _hubContext = hubContext;
         }
 
         /// <summary>
@@ -109,6 +116,11 @@ namespace BootcampApp.Service
                 var link = $"/orders/drinks/{newOrder.OrderId}";
 
                 await _notificationService.CreateNotificationAsync(newOrder.UserId, message, link);
+
+                _logger.LogInformation($"[SignalR] Sending notification to user {newOrder.UserId}: {message}");
+                await _hubContext.Clients.User(newOrder.UserId.ToString())
+    .SendAsync("ReceiveNotification", message);
+
 
                 return newOrder;
             }

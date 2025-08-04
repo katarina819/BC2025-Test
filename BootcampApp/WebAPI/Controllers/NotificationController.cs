@@ -2,6 +2,8 @@
 using BootcampApp.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Npgsql;
+using BootcampApp.Common;
 
 namespace WebAPI.Controllers
 {
@@ -13,6 +15,7 @@ namespace WebAPI.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
+        
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationController"/> class.
@@ -21,6 +24,7 @@ namespace WebAPI.Controllers
         public NotificationController(INotificationService notificationService)
         {
             _notificationService = notificationService;
+            
         }
 
         /// <summary>
@@ -28,14 +32,19 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="userId">User's unique identifier.</param>
         /// <returns>List of notifications or 404 if none found.</returns>
-        [HttpGet("users/{userId}/notifications")]
-        public async Task<IActionResult> GetUserNotifications(Guid userId)
-        {
-            var notifications = await _notificationService.GetNotificationsByUserIdAsync(userId);
-            if (notifications == null)
-                return NotFound();
-            return Ok(notifications);
-        }
+        //[HttpGet("users/{userId}/notifications")]
+        //public async Task<IActionResult> GetUserNotifications(Guid userId)
+        //{
+        //    var notifications = await _notificationService.GetNotificationsByUserIdAsync(userId);
+
+        //    // Filtriraj samo one koje nisu obrisane
+        //    var visibleNotifications = notifications.Where(n => !n.IsDeleted).ToList();
+
+        //    if (!visibleNotifications.Any())
+        //        return NotFound();
+
+        //    return Ok(visibleNotifications);
+        //}
 
         /// <summary>
         /// Adds a new notification.
@@ -90,5 +99,45 @@ namespace WebAPI.Controllers
             await _notificationService.DeleteNotificationAsync(id);
             return NoContent();
         }
+
+
+        [HttpPatch("users/{userId}/notifications/{id}")]
+        public async Task<IActionResult> UpdateNotificationStatus(Guid userId, Guid id, [FromBody] NotificationUpdateDto updateDto)
+        {
+            var updated = await _notificationService.UpdateNotificationStatusAsync(userId, id, updateDto.IsRead ?? false);
+
+            if (!updated)
+                return NotFound();
+
+            return Ok();
+        }
+
+        [HttpPut("users/{userId}/notifications/clear")]
+        public async Task<IActionResult> ClearNotifications(Guid userId)
+        {
+            await _notificationService.ClearNotificationsAsync(userId);
+            return NoContent();
+        }
+
+        [HttpGet("users/{userId}/notifications")]
+        public async Task<IActionResult> GetUserNotifications(Guid userId)
+        {
+            var notifications = await _notificationService.GetActiveNotificationsAsync(userId);
+            return Ok(notifications);
+        }
+
+        [HttpDelete("user/{userId}")]
+        public async Task<ActionResult> DeleteAllForUser(Guid userId)
+        {
+            await _notificationService.DeleteAllNotificationsForUserAsync(userId);
+            return NoContent();
+        }
+
+
+
+
+
+
+
     }
 }

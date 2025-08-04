@@ -113,7 +113,7 @@ INSERT INTO "UserProfiles" ("UserId", "PhoneNumber", "Address") VALUES
 ('f8ef7302-39f8-4ef7-b6bc-231619095579', '+385991112233', 'Gornjodravska obala 5, Osijek'); -- Ivana
 
 select * from "UserProfiles"; 
-
+select * from notifications;
 CREATE TABLE "PizzaItems" (
    "PizzaId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
    "Name" VARCHAR(100) NOT NULL,
@@ -720,3 +720,8 @@ WHERE "Size" IN ('Mala', 'Srednja', 'Velika');
 
 
 select * from "PizzaItems";
+
+
+SELECT * FROM notifications LIMIT 1;
+
+ALTER TABLE notifications ADD COLUMN is_deleted BOOLEAN NOT NULL DEFAULT FALSE;

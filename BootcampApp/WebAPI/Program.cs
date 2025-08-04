@@ -1,12 +1,14 @@
 ﻿using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using BootcampApp.SignalR.Hubs;
 using BootcampApp.Repository;
 using BootcampApp.Repository.BootcampApp.Repository.DrinksRepository;
 using BootcampApp.Service;
 using BootcampApp.Service.BootcampApp.Service.DrinksService;
-using Npgsql;
 using BootcampApp.Service.BootcampApp.Service.PizzaService;
+using BootcampApp.SignalR.Hubs;
+using Npgsql;
 
 // Register code page provider for text encoding support (e.g. for certain DB encodings)
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -15,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure Autofac as the Dependency Injection container instead of default Microsoft DI
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
+
 
 // Configure the Autofac container with registrations
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
@@ -66,7 +70,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5178")
+        policy.WithOrigins("http://localhost:5175")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials(); // Required for allowing cookies or credentials to be sent
@@ -75,7 +79,28 @@ builder.Services.AddCors(options =>
 
 // Add API documentation generator (Swagger)
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "BootcampApp API",
+        Version = "v1"  
+    });
+});
+
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<Microsoft.AspNetCore.SignalR.IUserIdProvider, NameIdentifierUserIdProvider>();
+
+builder.Services.AddAuthentication("MyCookieAuth")
+    .AddCookie("MyCookieAuth", options =>
+    {
+        options.Cookie.Name = "BootcampAppAuth";
+        options.LoginPath = "/api/users/login"; 
+        options.AccessDeniedPath = "/access-denied";
+    });
+
+builder.Services.AddAuthorization();
+
 
 // Configure logging to only use console logger, clearing other providers
 builder.Logging.ClearProviders();
@@ -97,8 +122,14 @@ if (app.Environment.IsDevelopment())
 // Enforce HTTPS redirection
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 // Enable authorization middleware (for [Authorize] attributes if used)
 app.UseAuthorization();
+
+app.MapHub<NotificationHub>("/notificationHub").RequireCors("AllowFrontend");
+
+
 
 // Map controller routes for incoming requests
 app.MapControllers();

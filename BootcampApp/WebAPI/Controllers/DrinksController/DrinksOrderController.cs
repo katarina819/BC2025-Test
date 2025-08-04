@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using BootcampApp.Common.BootcampApp.Common.DTOs;
 using BootcampApp.Model;
+using BootcampApp.SignalR.Hubs;
 using BootcampApp.Repository;
 using BootcampApp.Service;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BootcampApp.Controllers
@@ -18,14 +20,16 @@ namespace BootcampApp.Controllers
     public class DrinksOrderController : ControllerBase
     {
         private readonly IDrinksOrderService _drinksOrderService;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DrinksOrderController"/> class.
         /// </summary>
         /// <param name="drinksOrderService">Service for managing drinks orders.</param>
-        public DrinksOrderController(IDrinksOrderService drinksOrderService)
+        public DrinksOrderController(IDrinksOrderService drinksOrderService, IHubContext<NotificationHub> hubContext)
         {
             _drinksOrderService = drinksOrderService;
+            _hubContext = hubContext;
         }
 
         /*
@@ -114,6 +118,9 @@ namespace BootcampApp.Controllers
                 return BadRequest("Each drink must have a quantity greater than zero.");
 
             var createdOrder = await _drinksOrderService.CreateOrderAsync(request);
+
+            string userId = request.UserId.ToString();
+            await _hubContext.Clients.User(userId).SendAsync("ReceiveNotification", "A new drinks order has been received!");
             return Ok(createdOrder);
         }
 

@@ -10,13 +10,19 @@
 		<PackageReference Include="Autofac" Version="8.3.0" />
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
 		<PackageReference Include="Npgsql" Version="9.0.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\BootcampApp.Common\BootcampApp.Common.csproj" />
 		<ProjectReference Include="..\BootcampApp.Model\BootcampApp.Model.csproj" />
 		<ProjectReference Include="..\Bootcamp.App.Service\BootcampApp.Service.csproj" />
+		<ProjectReference Include="..\BootcampApp.SignalR\BootcampApp.SignalR.csproj" />
+
 	</ItemGroup>
 
 </Project>

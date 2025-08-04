@@ -9,6 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AppLoginRequest = BootcampApp.Common.LoginRequest.LoginRequest;
 using BootcampApp.Common;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 
 namespace WebAPI.Controllers
 {
@@ -63,6 +67,19 @@ namespace WebAPI.Controllers
 
             if (user == null)
                 return Unauthorized("Invalid name or email.");
+
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.Name),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim("UserId", user.Id.ToString())
+    };
+
+            var identity = new ClaimsIdentity(claims, "MyCookieAuth");
+            var principal = new ClaimsPrincipal(identity);
+
+            
+            await HttpContext.SignInAsync("MyCookieAuth", principal);
 
             return Ok(user);
         }

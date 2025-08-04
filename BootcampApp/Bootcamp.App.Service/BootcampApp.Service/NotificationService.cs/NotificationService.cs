@@ -1,8 +1,12 @@
-﻿using BootcampApp.Model;
-using BootcampApp.Repository;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BootcampApp.Model;
+using BootcampApp.Repository;
+using BootcampApp.SignalR.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace BootcampApp.Service
 {
@@ -12,17 +16,23 @@ namespace BootcampApp.Service
     public class NotificationService : INotificationService
     {
         private readonly IUserRepository _userRepository;
-        private readonly INotificationRepository _repository;
+        private readonly INotificationRepository _notificationRepository;
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly string _connectionString;
+        private readonly ILogger<NotificationService> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationService"/> class.
         /// </summary>
         /// <param name="userRepository">The user repository for user data access.</param>
         /// <param name="repository">The notification repository for notification data access.</param>
-        public NotificationService(IUserRepository userRepository, INotificationRepository repository)
+        public NotificationService(IUserRepository userRepository, INotificationRepository notificationRepository, IHubContext<NotificationHub> hubContext, string connectionString, ILogger<NotificationService> logger)
         {
             _userRepository = userRepository;
-            _repository = repository;
+            _notificationRepository = notificationRepository;
+            _hubContext = hubContext;
+            _connectionString = connectionString;
+            _logger = logger;
         }
 
         /// <summary>
@@ -32,7 +42,7 @@ namespace BootcampApp.Service
         /// <returns>A list of <see cref="Notification"/> objects for the user.</returns>
         public Task<List<Notification>> GetNotificationsByUserIdAsync(Guid userId)
         {
-            return _repository.GetNotificationsByUserIdAsync(userId);
+            return _notificationRepository.GetNotificationsByUserIdAsync(userId);
         }
 
         /// <summary>
@@ -41,7 +51,7 @@ namespace BootcampApp.Service
         /// <param name="notification">The notification to add.</param>
         public Task AddNotificationAsync(Notification notification)
         {
-            return _repository.AddNotificationAsync(notification);
+            return _notificationRepository.AddNotificationAsync(notification);
         }
 
         /// <summary>
@@ -50,7 +60,7 @@ namespace BootcampApp.Service
         /// <param name="notificationId">The notification's unique identifier.</param>
         public Task MarkAsReadAsync(Guid notificationId)
         {
-            return _repository.MarkAsReadAsync(notificationId);
+            return _notificationRepository.MarkAsReadAsync(notificationId);
         }
 
         /// <summary>
@@ -59,11 +69,11 @@ namespace BootcampApp.Service
         /// <param name="userId">The user's unique identifier.</param>
         public async Task MarkAllAsReadAsync(Guid userId)
         {
-            var notifications = await _repository.GetNotificationsByUserIdAsync(userId);
+            var notifications = await _notificationRepository.GetNotificationsByUserIdAsync(userId);
             foreach (var notification in notifications)
             {
                 if (!notification.IsRead)
-                    await _repository.MarkAsReadAsync(notification.NotificationId);
+                    await _notificationRepository.MarkAsReadAsync(notification.NotificationId);
             }
         }
 
@@ -96,7 +106,26 @@ namespace BootcampApp.Service
                 Link = link
             };
 
-            await _repository.AddNotificationAsync(notification);
+            await _notificationRepository.AddNotificationAsync(notification);
+            _logger.LogInformation($"[SignalR] Sending notification to user {userId}: {message}");
+
+            try
+            {
+                // SignalR payload – neka odgovara Notification modelu na frontend strani
+                await _hubContext.Clients.User(userId.ToString()).SendAsync("ReceiveNotification", new
+                {
+                    notificationId = notification.NotificationId,
+                    userId = userId,
+                    message = notification.Message,
+                    isRead = notification.IsRead,
+                    createdAt = notification.CreatedAt,
+                    link = notification.Link
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"[SignalR] Failed to send notification to user {userId}");
+            }
         }
 
         /// <summary>
@@ -121,7 +150,56 @@ namespace BootcampApp.Service
                 CreatedAt = DateTime.UtcNow
             };
 
-            await _repository.AddAsync(notification);
+            await _notificationRepository.AddAsync(notification);
         }
+
+        public async Task<bool> UpdateNotificationStatusAsync(Guid userId, Guid notificationId, bool isRead)
+        {
+            await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var sql = "UPDATE notifications SET is_read = @isRead WHERE notification_id = @notificationId AND user_id = @userId";
+
+            await using var command = new NpgsqlCommand(sql, connection);
+            command.Parameters.AddWithValue("isRead", isRead);
+            command.Parameters.AddWithValue("notificationId", notificationId);
+            command.Parameters.AddWithValue("userId", userId);
+
+            var rowsAffected = await command.ExecuteNonQueryAsync();
+            return rowsAffected > 0;
+        }
+
+        public async Task ClearNotificationsAsync(Guid userId)
+        {
+            await _notificationRepository.SoftDeleteAllByUserIdAsync(userId);
+        }
+
+
+        public async Task<IEnumerable<Notification>> GetActiveNotificationsAsync(Guid userId)
+        {
+            var notifications = await _notificationRepository.GetAllByUserIdAsync(userId);
+            return notifications.Where(n => !n.IsDeleted);
+        }
+
+        public async Task DeleteAllNotificationsForUserAsync(Guid userId)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            await conn.OpenAsync();
+
+            var command = new NpgsqlCommand(
+                "DELETE FROM notifications WHERE user_id = @userId", conn);
+
+            command.Parameters.AddWithValue("userId", userId);
+
+            await command.ExecuteNonQueryAsync();
+        }
+
+
+
+
+
+
+
+
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System.Linq;
 using BootcampApp.Common.BootcampApp.Common.DTOs;
 using BootcampApp.Model;
-using BootcampApp.Service;
-using Microsoft.AspNetCore.Mvc;
-using WebAPI.REST;
 using BootcampApp.Model.Entities.Pizza;
+using BootcampApp.Service;
 using BootcampApp.Service.BootcampApp.Service.PizzaService;
+using BootcampApp.SignalR.Hubs;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using WebAPI.REST;
 
 namespace WebAPI.Controllers
 {
@@ -18,16 +20,18 @@ namespace WebAPI.Controllers
     {
         private readonly IPizzaService _pizzaService;
         private readonly IPizzaOrderService _pizzaOrderService;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
         /// <summary>
         /// Initializes a new instance of <see cref="PizzaOrdersController"/>.
         /// </summary>
         /// <param name="pizzaService">Service to manage pizzas.</param>
         /// <param name="pizzaOrderService">Service to manage pizza orders.</param>
-        public PizzaOrdersController(IPizzaService pizzaService, IPizzaOrderService pizzaOrderService)
+        public PizzaOrdersController(IPizzaService pizzaService, IPizzaOrderService pizzaOrderService, IHubContext<NotificationHub> hubContext)
         {
             _pizzaService = pizzaService;
             _pizzaOrderService = pizzaOrderService;
+            _hubContext = hubContext;
         }
 
         /*
@@ -92,6 +96,11 @@ namespace WebAPI.Controllers
                 return BadRequest("Each item must have a quantity greater than zero.");
 
             var createdOrder = await _pizzaOrderService.CreateOrderAsync(request);
+
+            string userId = request.UserId.ToString();
+
+            await _hubContext.Clients.User(userId).SendAsync("ReceiveNotification", "A new order has been received!");
+
 
             // Return the order ID in the response:
             return Ok(new { orderId = createdOrder.OrderId });

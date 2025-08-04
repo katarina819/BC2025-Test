@@ -48,5 +48,14 @@ namespace BootcampApp.Service
         /// <param name="message">The notification message.</param>
         /// <param name="link">An optional link related to the notification.</param>
         Task CreateNotificationAsync(Guid userId, string message, string? link = null);
+
+        Task<bool> UpdateNotificationStatusAsync(Guid userId, Guid notificationId, bool isRead);
+
+        Task ClearNotificationsAsync(Guid userId);
+
+        Task<IEnumerable<Notification>> GetActiveNotificationsAsync(Guid userId);
+
+        Task DeleteAllNotificationsForUserAsync(Guid userId);
+
     }
 }

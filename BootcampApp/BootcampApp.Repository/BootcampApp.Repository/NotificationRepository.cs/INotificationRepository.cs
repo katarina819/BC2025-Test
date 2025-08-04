@@ -51,4 +51,10 @@ public interface INotificationRepository
     /// <param name="userId">The unique identifier of the user.</param>
     /// <returns>A list of <see cref="Notification"/> objects.</returns>
     Task<List<Notification>> GetByUserIdAsync(Guid userId);
+
+    Task<List<Notification>> GetAllByUserIdAsync(Guid userId);
+
+    Task SaveChangesAsync();
+
+    Task SoftDeleteAllByUserIdAsync(Guid userId);
 }

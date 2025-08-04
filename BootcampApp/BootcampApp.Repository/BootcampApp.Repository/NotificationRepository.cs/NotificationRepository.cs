@@ -33,10 +33,11 @@ namespace BootcampApp.Repository
             var notifications = new List<Notification>();
 
             const string sql = @"
-                SELECT notification_id, user_id, message, is_read, created_at, link
-                FROM notifications
-                WHERE user_id = @UserId
-                ORDER BY created_at DESC;";
+    SELECT notification_id, user_id, message, is_read, created_at, link, is_deleted
+    FROM notifications
+    WHERE user_id = @UserId AND is_deleted = FALSE
+    ORDER BY created_at DESC;";
+
 
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -55,7 +56,9 @@ namespace BootcampApp.Repository
                     Message = reader.GetString(2),
                     IsRead = reader.GetBoolean(3),
                     CreatedAt = reader.GetDateTime(4),
-                    Link = reader.IsDBNull(5) ? null : reader.GetString(5)
+                    Link = reader.IsDBNull(5) ? null : reader.GetString(5),
+                    IsDeleted = reader.GetBoolean(6)
+
                 });
             }
 
@@ -162,5 +165,34 @@ namespace BootcampApp.Repository
         {
             return await GetByUserIdAsync(userId);
         }
+
+        public async Task<List<Notification>> GetAllByUserIdAsync(Guid userId)
+        {
+            return await GetByUserIdAsync(userId);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+           
+        }
+
+        public async Task SoftDeleteAllByUserIdAsync(Guid userId)
+        {
+            const string sql = @"
+                UPDATE notifications
+                SET is_deleted = TRUE
+                WHERE user_id = @UserId";
+
+            await using var conn = new NpgsqlConnection(_connectionString);
+            await conn.OpenAsync();
+
+            await using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("UserId", userId);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+
+
     }
 }

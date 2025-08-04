@@ -36,5 +36,10 @@ namespace BootcampApp.Model
         /// Gets or sets an optional link associated with the notification.
         /// </summary>
         public string? Link { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the notification has been deleted (soft delete).
+        /// </summary>
+        public bool IsDeleted { get; set; }
     }
 }
