@@ -5,7 +5,7 @@ services:
     plan: free
     repo: https://github.com/katarina819/BC2025-Test
     branch: main
-    rootDir: BootcampApp
+    rootDir: 
     dockerfilePath: Dockerfile
     build:
       context: .
