@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: bc2025-backend
+    env: dotnet
+    plan: free
+    buildCommand: dotnet build
+    startCommand: dotnet run --project WebAPI
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        value: YOUR_CONNECTION_STRING_HERE
+    rootDir: WebAPI

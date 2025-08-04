@@ -1,5 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+drop table "Users";
+drop table "UserProfiles";
 
 CREATE TABLE "Users" (
    "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -26,44 +28,44 @@ SET "Age" = CASE "Name"
 END;
 
 
-INSERT INTO "Users" ("Id", "Name", "Email") 
-VALUES (uuid_generate_v4(), 'Ana', 'ana@example.com') 
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
+VALUES (uuid_generate_v4(), 'Ana', 'ana@example.com', 25) 
 RETURNING "Id";
 
-INSERT INTO "Users" ("Id", "Name", "Email") 
-VALUES (uuid_generate_v4(), 'Ivan', 'ivan@example.com') 
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
+VALUES (uuid_generate_v4(), 'Ivan', 'ivan@example.com', 30) 
 RETURNING "Id";
 
-INSERT INTO "Users" ("Id", "Name", "Email") 
-VALUES (uuid_generate_v4(), 'Marko', 'marko@example.com') 
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
+VALUES (uuid_generate_v4(), 'Marko', 'marko@example.com', 28) 
 RETURNING "Id";
 
-INSERT INTO "Users" ("Id", "Name", "Email") 
-VALUES (uuid_generate_v4(), 'Petra', 'petra@example.com') 
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
+VALUES (uuid_generate_v4(), 'Petra', 'petra@example.com', 22) 
 RETURNING "Id";
 
-INSERT INTO "Users" ("Id", "Name", "Email") 
-VALUES (uuid_generate_v4(), 'Luka', 'luka@example.com') 
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
+VALUES (uuid_generate_v4(), 'Luka', 'luka@example.com', 35) 
 RETURNING "Id";
 
-INSERT INTO "Users" ("Id", "Name", "Email") 
-VALUES (uuid_generate_v4(), 'Maja', 'maja@example.com') 
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
+VALUES (uuid_generate_v4(), 'Maja', 'maja@example.com', 27) 
 RETURNING "Id";
 
-INSERT INTO "Users" ("Id", "Name", "Email") 
-VALUES (uuid_generate_v4(), 'Nikola', 'nikola@example.com') 
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
+VALUES (uuid_generate_v4(), 'Nikola', 'nikola@example.com', 33) 
 RETURNING "Id";
 
-INSERT INTO "Users" ("Id", "Name", "Email") 
-VALUES (uuid_generate_v4(), 'Tina', 'tina@example.com') 
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
+VALUES (uuid_generate_v4(), 'Tina', 'tina@example.com', 24) 
 RETURNING "Id";
 
-INSERT INTO "Users" ("Id", "Name", "Email") 
-VALUES (uuid_generate_v4(), 'Filip', 'filip@example.com') 
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
+VALUES (uuid_generate_v4(), 'Filip', 'filip@example.com', 29) 
 RETURNING "Id";
 
-INSERT INTO "Users" ("Id", "Name", "Email") 
-VALUES (uuid_generate_v4(), 'Ivana', 'ivana@example.com') 
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") 
+VALUES (uuid_generate_v4(), 'Ivana', 'ivana@example.com', 26) 
 RETURNING "Id";
 
 select * from "Users";
@@ -76,16 +78,16 @@ INSERT INTO "Users"("Id", "Name", "Email", "Age")
 VALUES ('7beb4278-9cba-42c6-b1d8-765f388810ad', 'Tina', 'tina@example.com', 24);
 
 
-INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('1fb4eecd-2ca7-472e-96bf-9d228a49836d', 'Ana', 'ana@example.com');
-INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('daa54377-0a81-4d9f-aa5f-e2fe3d2cf24b', 'Ivan', 'ivan@example.com');
-INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('e54cee70-3e5e-4e7c-a95c-780b58cd5926', 'Marko', 'marko@example.com');
-INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('69ae3bb2-781c-4e0c-b1a7-b662d65e80b2', 'Petra', 'petra@example.com');
-INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('e5e7b3bc-1986-47e3-a28d-ec8b739223b6', 'Luka', 'luka@example.com');
-INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('a4836e85-c454-4ec0-b1f4-4fe31cc5eea2', 'Maja', 'maja@example.com');
-INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('011c1f93-abd2-43e2-9634-cb24decff7e4', 'Nikola', 'nikola@example.com');
-INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('7beb4278-9cba-42c6-b1d8-765f388810ad', 'Tina', 'tina@example.com');
-INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('3f5bc139-40f5-4716-8feb-34faefa05bd5', 'Filip', 'filip@example.com');
-INSERT INTO "Users" ("Id", "Name", "Email") VALUES ('c51bcdbf-076a-48ac-b70a-91f60fe48945', 'Ivana', 'ivana@example.com');
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") VALUES ('1fb4eecd-2ca7-472e-96bf-9d228a49836d', 'Ana', 'ana@example.com', 25);
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") VALUES ('daa54377-0a81-4d9f-aa5f-e2fe3d2cf24b', 'Ivan', 'ivan@example.com', 30);
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") VALUES ('e54cee70-3e5e-4e7c-a95c-780b58cd5926', 'Marko', 'marko@example.com', 28);
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") VALUES ('69ae3bb2-781c-4e0c-b1a7-b662d65e80b2', 'Petra', 'petra@example.com', 22);
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") VALUES ('e5e7b3bc-1986-47e3-a28d-ec8b739223b6', 'Luka', 'luka@example.com', 35);
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") VALUES ('a4836e85-c454-4ec0-b1f4-4fe31cc5eea2', 'Maja', 'maja@example.com', 27);
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") VALUES ('011c1f93-abd2-43e2-9634-cb24decff7e4', 'Nikola', 'nikola@example.com', 33);
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") VALUES ('7beb4278-9cba-42c6-b1d8-765f388810ad', 'Tina', 'tina@example.com', 24);
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") VALUES ('3f5bc139-40f5-4716-8feb-34faefa05bd5', 'Filip', 'filip@example.com', 29);
+INSERT INTO "Users" ("Id", "Name", "Email", "Age") VALUES ('c51bcdbf-076a-48ac-b70a-91f60fe48945', 'Ivana', 'ivana@example.com', 26);
 
 CREATE TABLE "UserProfiles" (
    "UserId" UUID PRIMARY KEY,
@@ -101,16 +103,16 @@ VALUES ('d0456ebf-31c2-4b87-aa1d-087b42e8a0f6', '+385987878787', 'Sjenjak 2, Osi
 
 
 INSERT INTO "UserProfiles" ("UserId", "PhoneNumber", "Address") VALUES
-('02705186-7608-4e49-bd0e-450e7253735c', '+385981112233', 'Vukovarska 12, Osijek'),         -- Ana
-('670dffdc-a4dd-47d2-8aac-be8bb00452e4', '+385981234567', 'Europske avenije 34, Osijek'),   -- Ivan
-('81ee6d58-4a84-4f0b-8539-565e4b55ad07', '+385997776655', 'J. J. Strossmayera 5, Osijek'),   -- Marko
-('72926c3a-855f-45d9-812a-e8c8faafeecf', '+385912223344', 'Kapucinska 88, Osijek'),         -- Petra
-('89a819e1-ac2a-41e8-98ff-516d1b994b87', '+385923334455', 'Radićeva 9, Osijek'),            -- Luka
-('6bc630dc-e0b2-4ae7-a9ae-77e9184a9ee1', '+385994445566', 'Županijska 77, Osijek'),         -- Maja
+('1fb4eecd-2ca7-472e-96bf-9d228a49836d', '+385981112233', 'Vukovarska 12, Osijek'),         -- Ana
+('daa54377-0a81-4d9f-aa5f-e2fe3d2cf24b', '+385981234567', 'Europske avenije 34, Osijek'),   -- Ivan
+('e54cee70-3e5e-4e7c-a95c-780b58cd5926', '+385997776655', 'J. J. Strossmayera 5, Osijek'),   -- Marko
+('69ae3bb2-781c-4e0c-b1a7-b662d65e80b2', '+385912223344', 'Kapucinska 88, Osijek'),         -- Petra
+('e5e7b3bc-1986-47e3-a28d-ec8b739223b6', '+385923334455', 'Radićeva 9, Osijek'),            -- Luka
+('a4836e85-c454-4ec0-b1f4-4fe31cc5eea2', '+385994445566', 'Županijska 77, Osijek'),         -- Maja
 ('011c1f93-abd2-43e2-9634-cb24decff7e4', '+385995556677', 'Trg slobode 13, Osijek'),        -- Nikola
 ('7beb4278-9cba-42c6-b1d8-765f388810ad', '+385987878787', 'Sjenjak 2, Osijek'),             -- Tina
-('f26edee6-6edb-42ae-97f5-00c270e0b48b', '+385996969696', 'Retfalačka 4, Osijek'),          -- Filip
-('f8ef7302-39f8-4ef7-b6bc-231619095579', '+385991112233', 'Gornjodravska obala 5, Osijek'); -- Ivana
+('3f5bc139-40f5-4716-8feb-34faefa05bd5', '+385996969696', 'Retfalačka 4, Osijek'),          -- Filip
+('c51bcdbf-076a-48ac-b70a-91f60fe48945', '+385991112233', 'Gornjodravska obala 5, Osijek'); -- Ivana
 
 select * from "UserProfiles"; 
 select * from notifications;
@@ -228,6 +230,10 @@ SET "Price" = CASE
    ELSE "Price"
 END;
 
+ALTER TABLE "PizzaItems"
+ADD COLUMN "IsVegetarian" BOOLEAN;
+
+
 UPDATE "PizzaItems"
 SET "IsVegetarian" = TRUE
 WHERE "Name" IN ('Margherita', 'Vegetariana', 'Quattro Formaggi');
@@ -291,6 +297,8 @@ WHERE column_name = 'CardPaymentTransactionId';
 ALTER TABLE "DrinkOrderItems"
 DROP COLUMN IF EXISTS "CardPaymentTransactionId";
 
+DROP TABLE IF EXISTS "DrinkOrderItems" CASCADE;
+
 CREATE TABLE "DrinkOrderItems" (
    "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
    "OrderId" UUID NOT NULL,
@@ -302,9 +310,11 @@ CREATE TABLE "DrinkOrderItems" (
    FOREIGN KEY ("DrinkId") REFERENCES "Drinks"("DrinkId") ON DELETE CASCADE
 );
 
+SELECT "DrinkId", "Name", "Price" FROM "Drinks";
+
 
 INSERT INTO "DrinkOrderItems" ("OrderId", "DrinkId", "Quantity", "UnitPrice")
-VALUES ('f09686a5-9ea1-4023-8556-b2003fb16f4c', 'e604a312-1635-4bc6-90a0-1abdc87d617c', 1, 2.00);
+VALUES ('e854be55-f99f-4fa0-be7f-87a78b1ce4d3', '81ee55ce-096b-49f1-b33f-f9370d2a396d', 1, 2.00);
 
 
 INSERT INTO "DrinkOrderItems" ("OrderId", "DrinkId", "Quantity", "UnitPrice")
@@ -330,18 +340,25 @@ CREATE TABLE "DrinksOrders" (
    FOREIGN KEY ("UserId") REFERENCES "Users"("Id") ON DELETE CASCADE
 	);
 
+SELECT "OrderId" FROM "DrinksOrders";
+
+
 ALTER TABLE "DrinksOrders" RENAME TO drinks_orders;
 
-INSERT INTO "DrinksOrders" ("UserId") VALUES
-('02705186-7608-4e49-bd0e-450e7253735c'),
-('89a819e1-ac2a-41e8-98ff-516d1b994b87');
+INSERT INTO "DrinksOrders" ("UserId")
+VALUES ('1fb4eecd-2ca7-472e-96bf-9d228a49836d')
+RETURNING "OrderId";
+
 
 SELECT * FROM "DrinksOrders";
 select * from drinks_orders;
 INSERT INTO "PizzaOrders" ("UserId") VALUES
-('8545b460-fec0-46ce-af3b-3b0f4644c699'),  -- Ana
-('670dffdc-a4dd-47d2-8aac-be8bb00452e4'),  -- Ivan
-('81ee6d58-4a84-4f0b-8539-565e4b55ad07');  -- Marko
+('1fb4eecd-2ca7-472e-96bf-9d228a49836d'),  -- Ana
+('daa54377-0a81-4d9f-aa5f-e2fe3d2cf24b'),  -- Ivan
+('e54cee70-3e5e-4e7c-a95c-780b58cd5926');  -- Marko
+
+SELECT * FROM "Users";
+
 
 ALTER TABLE drinks_orders
 ADD COLUMN "CardPaymentTransactionId" VARCHAR(100);
@@ -359,12 +376,14 @@ CREATE TABLE "PizzaOrderItems" (
    FOREIGN KEY ("PizzaId") REFERENCES "PizzaItems"("PizzaId") ON DELETE CASCADE
 );
 
+SELECT "OrderId" FROM "PizzaOrders";
+SELECT * FROM "PizzaItems";
+
 INSERT INTO "PizzaOrderItems" ("OrderId", "PizzaId", "Quantity", "UnitPrice") VALUES
-('b9a9d0b3-bb5d-464e-8b47-0580ef0f3414', 'a181c48b-b2fc-4a59-b3f9-ab61b1ef8e73', 2, 7.90),
-('02f9b04e-6546-48a5-a06d-a04ae8f3ed87', '885c7d22-a118-444a-8d22-c6dddb9edd2e', 1, 6.70),
-('9552d481-576b-44c7-8b94-65a7149e0a06', '75100469-6319-4083-87d0-b0b3ec229a21', 3, 5.40),
-('4d78ff71-a375-44d4-b4d7-975b8d2219a6', 'd705911b-6eef-4b15-94ad-494e40737469', 1, 9.30),
-('2e974571-aa60-42f5-9216-c05c7f96ab2b', '86debef5-de65-4a25-aa12-a6b4cb25b48a', 2, 7.80);
+('f3703dfb-0f11-4c96-862a-7863ff262de6', 'd787b292-6a7b-4177-8447-ecb2bd791267', 2, 7.90),
+('c0a223f2-ff70-4241-ab23-1220398a9ca4', 'cda8e29d-10d3-4d18-a78d-d48f67e6727d', 1, 6.70),
+('721d6f31-1863-4282-b1e9-5cef7b61c775', '1a358b81-4f2c-4c0f-9b88-c7de2620dbf3', 3, 5.40);
+
 
 INSERT INTO "PizzaOrders" ("UserId")
 VALUES ('670dffdc-a4dd-47d2-8aac-be8bb00452e4')  
