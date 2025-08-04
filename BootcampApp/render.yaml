@@ -1,12 +1,12 @@
 services:
   - type: web
-    name: bootcampapp
+    name: BootcampApp
     env: docker
     plan: free
     repo: https://github.com/katarina819/BC2025-Test
     branch: main
     rootDir: BootcampApp
-    dockerfilePath: Dockerfile
+    dockerfilePath: BootcampApp/Dockerfile
     build:
       context: .
     startCommand: ""
