@@ -2,7 +2,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 COPY *.sln ./
-COPY BootcampApp.WebAPI/*.csproj ./BootcampApp.WebAPI/
+COPY WebAPI/*.csproj ./WebAPI/
+
 # Dodaj COPY za ostale projekte ako ih imaš
 
 RUN dotnet restore
