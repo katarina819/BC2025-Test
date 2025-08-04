@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: bootcampapp
+    env: docker
+    plan: free
+    dockerfilePath: WebAPI/Dockerfile
+    buildCommand: ""
+    startCommand: ""
+    autoDeploy: true
