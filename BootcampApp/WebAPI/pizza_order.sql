@@ -749,6 +749,9 @@ WHERE "Size" IN ('Mala', 'Srednja', 'Velika');
 
 select * from "PizzaItems";
 
+SELECT column_name 
+FROM information_schema.columns 
+WHERE table_name = 'notifications' AND column_name = 'is_deleted';
 
 SELECT * FROM notifications LIMIT 1;
 
