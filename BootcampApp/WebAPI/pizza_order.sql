@@ -294,10 +294,6 @@ SELECT table_name, column_name
 FROM information_schema.columns
 WHERE column_name = 'CardPaymentTransactionId';
 
-ALTER TABLE "DrinkOrderItems"
-DROP COLUMN IF EXISTS "CardPaymentTransactionId";
-
-DROP TABLE IF EXISTS "DrinkOrderItems" CASCADE;
 
 CREATE TABLE "DrinkOrderItems" (
    "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
