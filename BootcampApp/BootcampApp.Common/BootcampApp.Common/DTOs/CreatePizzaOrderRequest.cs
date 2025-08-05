@@ -16,12 +16,12 @@ namespace BootcampApp.Common.BootcampApp.Common.DTOs
         /// <summary>
         /// Gets or sets the list of pizza items included in the order.
         /// </summary>
-        public List<CreatePizzaOrderItemRequest> Items { get; set; }
+        public List<CreatePizzaOrderItemRequest> Items { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the payment method used for the order (e.g., "Cash", "Card").
         /// </summary>
-        public string PaymentMethod { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
     }
 
     /// <summary>
