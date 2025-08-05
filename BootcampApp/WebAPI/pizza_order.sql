@@ -347,6 +347,7 @@ CREATE TABLE "DrinksOrders" (
 
 SELECT "OrderId" FROM public.drinks_orders;
 
+SELECT * FROM notifications LIMIT 1;
 
 ALTER TABLE "DrinksOrders" RENAME TO drinks_orders;
 
