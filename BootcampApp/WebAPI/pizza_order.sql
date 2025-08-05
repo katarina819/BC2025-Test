@@ -324,6 +324,7 @@ VALUES ('4adf9527-a452-4835-b036-d394ef8dafe7', '9a7d9d99-4565-4dea-8c39-b5ccb18
 
 ALTER TABLE "PizzaOrders" RENAME TO pizza_orders;
 SELECT * FROM pizza_orders;
+select * from "PizzaOrders";
 
 
 CREATE TABLE "PizzaOrders" (
