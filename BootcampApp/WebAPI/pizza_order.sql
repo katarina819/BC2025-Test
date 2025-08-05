@@ -294,6 +294,13 @@ SELECT table_name, column_name
 FROM information_schema.columns
 WHERE column_name = 'CardPaymentTransactionId';
 
+ALTER TABLE drinks_orders
+ADD COLUMN "CardPaymentTransactionId" TEXT;
+
+SELECT column_name
+FROM information_schema.columns
+WHERE table_name = 'drinks_orders';
+
 
 CREATE TABLE "DrinkOrderItems" (
    "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
