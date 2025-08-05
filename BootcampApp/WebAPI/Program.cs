@@ -7,7 +7,6 @@ using BootcampApp.Repository.BootcampApp.Repository.DrinksRepository;
 using BootcampApp.Service;
 using BootcampApp.Service.BootcampApp.Service.DrinksService;
 using BootcampApp.Service.BootcampApp.Service.PizzaService;
-using BootcampApp.SignalR.Hubs;
 using Npgsql;
 
 // Register code page provider for text encoding support (e.g. for certain DB encodings)
@@ -70,7 +69,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5175")
+        policy.WithOrigins("https://pizzadrinks.netlify.app")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials(); // Required for allowing cookies or credentials to be sent
