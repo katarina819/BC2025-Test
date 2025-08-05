@@ -301,6 +301,16 @@ SELECT column_name
 FROM information_schema.columns
 WHERE table_name = 'drinks_orders';
 
+ALTER TABLE drinks_orders
+ADD COLUMN "CardPaymentTransactionId" VARCHAR(255);
+
+ALTER TABLE "DrinkOrderItems"
+ADD COLUMN "CardPaymentTransactionId" VARCHAR(255);
+
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name IN ('drinks_orders', 'DrinkOrderItems')
+  AND column_name = 'CardPaymentTransactionId';
 
 CREATE TABLE "DrinkOrderItems" (
    "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
