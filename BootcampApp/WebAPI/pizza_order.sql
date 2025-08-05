@@ -655,7 +655,8 @@ CREATE TABLE notifications (
    message TEXT NOT NULL,
    is_read BOOLEAN NOT NULL DEFAULT FALSE,
    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-   link TEXT NULL
+   link TEXT NULL,
+   is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE INDEX idx_notifications_user_id ON notifications(user_id);
@@ -663,6 +664,8 @@ CREATE INDEX idx_notifications_user_id ON notifications(user_id);
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 select * from notifications;
+
+SET search_path TO public;
 
 ALTER TABLE "Users"
 ADD COLUMN "Username" VARCHAR(100) UNIQUE;
@@ -754,5 +757,6 @@ FROM information_schema.columns
 WHERE table_name = 'notifications' AND column_name = 'is_deleted';
 
 SELECT * FROM notifications LIMIT 1;
+
 
 ALTER TABLE notifications ADD COLUMN is_deleted BOOLEAN NOT NULL DEFAULT FALSE;
