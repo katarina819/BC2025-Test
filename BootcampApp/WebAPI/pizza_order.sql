@@ -334,6 +334,10 @@ CREATE TABLE "PizzaOrders" (
    FOREIGN KEY ("UserId") REFERENCES "Users"("Id") ON DELETE CASCADE
 );
 
+SELECT * FROM public.drinks_orders;
+
+
+
 CREATE TABLE "DrinksOrders" (
    "OrderId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
    "UserId" UUID NOT NULL,
@@ -341,7 +345,7 @@ CREATE TABLE "DrinksOrders" (
    FOREIGN KEY ("UserId") REFERENCES "Users"("Id") ON DELETE CASCADE
 	);
 
-SELECT "OrderId" FROM "DrinksOrders";
+SELECT "OrderId" FROM public.drinks_orders;
 
 
 ALTER TABLE "DrinksOrders" RENAME TO drinks_orders;
@@ -351,8 +355,10 @@ VALUES ('1fb4eecd-2ca7-472e-96bf-9d228a49836d')
 RETURNING "OrderId";
 
 
-SELECT * FROM "DrinksOrders";
-select * from drinks_orders;
+SELECT * FROM public.drinks_orders;
+
+SELECT * FROM public.drinks_orders;
+
 INSERT INTO "PizzaOrders" ("UserId") VALUES
 ('1fb4eecd-2ca7-472e-96bf-9d228a49836d'),  -- Ana
 ('daa54377-0a81-4d9f-aa5f-e2fe3d2cf24b'),  -- Ivan
@@ -464,7 +470,8 @@ LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
 WHERE 1=1
 
 
-SELECT * FROM "DrinksOrders";
+SELECT * FROM public.drinks_orders;
+
 SELECT * FROM "DrinkOrderItems";
 SELECT * FROM "Users";
 SELECT * FROM "UserProfiles";
