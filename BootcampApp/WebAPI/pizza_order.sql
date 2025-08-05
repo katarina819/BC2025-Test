@@ -385,7 +385,7 @@ ALTER TABLE drinks_orders
 ADD COLUMN "CardPaymentTransactionId" VARCHAR(100);
 
 
-select * from "PizzaOrders";
+select * from "PizzaOrderItems";
 
 CREATE TABLE "PizzaOrderItems" (
    "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
