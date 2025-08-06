@@ -1,8 +1,5 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-drop table "Users";
-drop table "UserProfiles";
-
 CREATE TABLE "Users" (
    "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
    "Name" VARCHAR(100) NOT NULL,
@@ -289,28 +286,9 @@ SELECT * FROM "DrinkOrderItems";
 ALTER TABLE "DrinkOrderItems"
 ADD COLUMN "CardPaymentTransactionId" VARCHAR(255);
 
-
-SELECT table_name, column_name
-FROM information_schema.columns
-WHERE column_name = 'CardPaymentTransactionId';
-
-ALTER TABLE drinks_orders
-ADD COLUMN "CardPaymentTransactionId" TEXT;
-
-SELECT column_name
-FROM information_schema.columns
-WHERE table_name = 'drinks_orders';
-
 ALTER TABLE drinks_orders
 ADD COLUMN "CardPaymentTransactionId" VARCHAR(255);
 
-ALTER TABLE "DrinkOrderItems"
-ADD COLUMN "CardPaymentTransactionId" VARCHAR(255);
-
-SELECT column_name, data_type
-FROM information_schema.columns
-WHERE table_name IN ('drinks_orders', 'DrinkOrderItems')
-  AND column_name = 'CardPaymentTransactionId';
 
 CREATE TABLE "DrinkOrderItems" (
    "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -323,8 +301,6 @@ CREATE TABLE "DrinkOrderItems" (
    FOREIGN KEY ("DrinkId") REFERENCES "Drinks"("DrinkId") ON DELETE CASCADE
 );
 
-SELECT "DrinkId", "Name", "Price" FROM "Drinks";
-
 
 INSERT INTO "DrinkOrderItems" ("OrderId", "DrinkId", "Quantity", "UnitPrice")
 VALUES ('e854be55-f99f-4fa0-be7f-87a78b1ce4d3', '81ee55ce-096b-49f1-b33f-f9370d2a396d', 1, 2.00);
@@ -333,12 +309,9 @@ VALUES ('e854be55-f99f-4fa0-be7f-87a78b1ce4d3', '81ee55ce-096b-49f1-b33f-f9370d2
 INSERT INTO "DrinkOrderItems" ("OrderId", "DrinkId", "Quantity", "UnitPrice")
 VALUES ('4adf9527-a452-4835-b036-d394ef8dafe7', '9a7d9d99-4565-4dea-8c39-b5ccb189ad65', 1, 2.10);
 
-
+SELECT * FROM pizza_orders;
 
 ALTER TABLE "PizzaOrders" RENAME TO pizza_orders;
-SELECT * FROM pizza_orders;
-select * from "PizzaOrders";
-
 
 CREATE TABLE "PizzaOrders" (
    "OrderId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -348,8 +321,6 @@ CREATE TABLE "PizzaOrders" (
 );
 
 SELECT * FROM public.drinks_orders;
-
-
 
 CREATE TABLE "DrinksOrders" (
    "OrderId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -368,24 +339,14 @@ INSERT INTO "DrinksOrders" ("UserId")
 VALUES ('1fb4eecd-2ca7-472e-96bf-9d228a49836d')
 RETURNING "OrderId";
 
-
-SELECT * FROM public.drinks_orders;
-
-SELECT * FROM public.drinks_orders;
-
 INSERT INTO "PizzaOrders" ("UserId") VALUES
 ('1fb4eecd-2ca7-472e-96bf-9d228a49836d'),  -- Ana
 ('daa54377-0a81-4d9f-aa5f-e2fe3d2cf24b'),  -- Ivan
 ('e54cee70-3e5e-4e7c-a95c-780b58cd5926');  -- Marko
 
-SELECT * FROM "Users";
-
-
 ALTER TABLE drinks_orders
 ADD COLUMN "CardPaymentTransactionId" VARCHAR(100);
 
-
-select * from "PizzaOrderItems";
 
 CREATE TABLE "PizzaOrderItems" (
    "OrderItemId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -397,14 +358,13 @@ CREATE TABLE "PizzaOrderItems" (
    FOREIGN KEY ("PizzaId") REFERENCES "PizzaItems"("PizzaId") ON DELETE CASCADE
 );
 
-SELECT "OrderId" FROM "PizzaOrders";
-SELECT * FROM "PizzaItems";
+/* SELECT "OrderId" FROM "PizzaOrders";
+*/ 
 
 INSERT INTO "PizzaOrderItems" ("OrderId", "PizzaId", "Quantity", "UnitPrice") VALUES
 ('f3703dfb-0f11-4c96-862a-7863ff262de6', 'd787b292-6a7b-4177-8447-ecb2bd791267', 2, 7.90),
 ('c0a223f2-ff70-4241-ab23-1220398a9ca4', 'cda8e29d-10d3-4d18-a78d-d48f67e6727d', 1, 6.70),
 ('721d6f31-1863-4282-b1e9-5cef7b61c775', '1a358b81-4f2c-4c0f-9b88-c7de2620dbf3', 3, 5.40);
-
 
 INSERT INTO "PizzaOrders" ("UserId")
 VALUES ('670dffdc-a4dd-47d2-8aac-be8bb00452e4')  
@@ -424,11 +384,12 @@ ADD COLUMN "TotalPrice" NUMERIC(10, 2) GENERATED ALWAYS AS ("Quantity" * "UnitPr
 
 select * from "PizzaOrderItems";
 
-SELECT "OrderId", "UserId", "OrderDate" FROM "PizzaOrders";
+/* SELECT "OrderId", "UserId", "OrderDate" FROM "PizzaOrders";
+*/
 SELECT "PizzaId", "Name", "Size" FROM "PizzaItems";
 
 --inner join
-SELECT 
+/* SELECT 
    po."OrderId",
    u."Name" AS "UserName",
    pi."Name" AS "PizzaName",
@@ -438,9 +399,10 @@ FROM "PizzaOrders" po
 INNER JOIN "Users" u ON po."UserId" = u."Id"
 INNER JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
 INNER JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
+*/
 
 --left join
-SELECT 
+/* SELECT 
    po."OrderId",
    u."Name" AS "UserName",
    pi."Name" AS "PizzaName",
@@ -450,7 +412,7 @@ FROM "PizzaOrders" po
 LEFT JOIN "Users" u ON po."UserId" = u."Id"
 LEFT JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
 LEFT JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
-
+*/
 --right join
 SELECT 
    po."OrderId",
@@ -463,7 +425,7 @@ RIGHT JOIN pizza_orders po ON poi."OrderId" = po."OrderId"
 RIGHT JOIN "Users" u ON po."UserId" = u."Id"
 RIGHT JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
 
-SELECT 
+/* SELECT 
    po."OrderId", po."OrderDate",
    u."Id" as UserId, u."Name", u."Email", u."Age",
    up."PhoneNumber", up."Address",
@@ -475,6 +437,7 @@ LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
 JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
 JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId"
 ORDER BY po."OrderDate", po."OrderId";
+*/ 
 
 SELECT * FROM "UserProfiles" WHERE "UserId" = '670dffdc-a4dd-47d2-8aac-be8bb00452e4';
 
@@ -484,73 +447,9 @@ LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
 WHERE 1=1
 
 
-SELECT * FROM public.drinks_orders;
-
-SELECT * FROM "DrinkOrderItems";
-SELECT * FROM "Users";
-SELECT * FROM "UserProfiles";
-SELECT * FROM "Drinks";
-
-
-   SELECT
-       dr."OrderId", dr."OrderDate",
-       u."Id", u."Name", u."Email", u."Age",
-       up."PhoneNumber", up."Address",
-       doi."OrderItemId", doi."Quantity", doi."UnitPrice",
-       d."DrinkId", d."Name", d."Size", d."Price"
-   FROM "DrinksOrders" dr
-   JOIN "Users" u ON dr."UserId" = u."Id"
-   LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
-   JOIN "DrinkOrderItems" doi ON dr."OrderId" = doi."OrderId"
-   JOIN "Drinks" d ON doi."DrinkId" = d."DrinkId"
-   ORDER BY dr."OrderDate", dr."OrderId";
-
-	SELECT dr."OrderId", dr."OrderDate"
-FROM "DrinksOrders" dr
-LIMIT 5;
-
-
-SELECT
-   o."OrderId", 
-   o."UserId", 
-   o."OrderDate",
-   u."Id", u."Name", u."Email", u."Age",
-   up."UserId" AS "ProfileUserId",    -- OVO DODAJ za profile.UserId
-   up."PhoneNumber", 
-   up."Address",
-   i."OrderItemId", i."DrinkId", i."Quantity", i."UnitPrice", i."TotalCost",
-   d."DrinkId", d."Name" AS "DrinkName", d."Size", d."Price"
-FROM "DrinksOrders" o
-JOIN "Users" u ON o."UserId" = u."Id"
-LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
-LEFT JOIN "DrinkOrderItems" i ON o."OrderId" = i."OrderId"
-LEFT JOIN "Drinks" d ON i."DrinkId" = d."DrinkId"
-ORDER BY o."OrderDate", o."OrderId";
-
-
-SELECT
-   o."OrderId",
-   o."OrderDate",
-
-   u."Id" AS "UserId",
-   u."Name",
-   u."Email",
-
-   i."OrderItemId",
-   i."DrinkId",
-   i."Quantity",
-   i."UnitPrice",
-
-   d."Name" AS "DrinkName"
-FROM "DrinksOrders" o
-JOIN "Users" u ON o."UserId" = u."Id"
-LEFT JOIN "DrinkOrderItems" i ON o."OrderId" = i."OrderId"
-LEFT JOIN "Drinks" d ON i."DrinkId" = d."DrinkId"
-ORDER BY o."OrderDate", o."OrderId";
-
 SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
 
-SELECT
+/* SELECT
    po."OrderId", po."OrderDate",
    u."Id", u."Name", u."Email", u."Age",
    up."PhoneNumber", up."Address",
@@ -562,22 +461,7 @@ LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
 JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
 JOIN "PizzaItems" p ON poi."PizzaId" = p."PizzaId"
 ORDER BY po."OrderDate", po."OrderId";
-
-SELECT * FROM "Users";
-SELECT * FROM "Drinks";
-
-SELECT
- dr."OrderId", dr."OrderDate",
- u."Id", u."Name", u."Email", u."Age",
- up."PhoneNumber", up."Address",
- doi."OrderItemId", doi."Quantity", doi."UnitPrice",
- d."DrinkId", d."Name", d."Size", d."Price"
-FROM "DrinksOrders" dr
-JOIN "Users" u ON dr."UserId" = u."Id"
-LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
-JOIN "DrinkOrderItems" doi ON dr."OrderId" = doi."OrderId"
-JOIN "Drinks" d ON doi."DrinkId" = d."DrinkId"
-ORDER BY dr."OrderDate", dr."OrderId";
+*/
 
 CREATE TABLE payment_methods (
  payment_method_id SERIAL PRIMARY KEY,
@@ -597,7 +481,6 @@ select * from payments;
 
 ALTER TABLE payments
 ADD COLUMN order_type VARCHAR(20);
-
 
 
 SELECT p.*, po.*
@@ -622,10 +505,6 @@ INSERT INTO payments (order_id, payment_method_id, amount, payment_date, order_t
 ('b9a9d0b3-bb5d-464e-8b47-0580ef0f3414', 1, 12.00, '2025-03-20 13:15:00', 'pizza'),
 ('02f9b04e-6546-48a5-a06d-a04ae8f3ed87', 2, 25.75, '2025-04-18 12:30:00', 'pizza');
 
-
-ALTER TABLE payments ADD COLUMN order_type VARCHAR(20);
-
-
 SELECT 
    p.order_id,
    p.amount,
@@ -639,28 +518,6 @@ LEFT JOIN pizza_orders po
 LEFT JOIN drinks_orders d 
    ON p.order_id = d."OrderId" AND p.order_type = 'drink';
 
-SELECT table_name
-FROM information_schema.tables
-WHERE table_schema = 'public';
-
-
-
-SELECT * FROM information_schema.tables WHERE table_name = 'pizza_orders';
-SELECT * FROM information_schema.tables WHERE table_name = 'drinks_orders';
-
-
-SELECT table_name
-FROM information_schema.tables
-WHERE table_name = 'pizza_orders';
-
-SELECT table_name
-FROM information_schema.tables
-WHERE table_name = 'PizzaOrders';
-
-
-SELECT "OrderId", "UserId", "OrderDate", "CardPaymentTransactionId"
-FROM drinks_orders
-WHERE "OrderId" = 'f09686a5-9ea1-4023-8556-b2003fb16f4c';
 
 CREATE TABLE notifications (
    notification_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -677,97 +534,6 @@ CREATE INDEX idx_notifications_user_id ON notifications(user_id);
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 select * from notifications;
-
-SET search_path TO public;
-
-ALTER TABLE "Users"
-ADD COLUMN "Username" VARCHAR(100) UNIQUE;
-
-UPDATE "Users" SET "Username" = "Email" WHERE "Username" IS NULL;
-
-SELECT "Email", COUNT(*)
-FROM "Users"
-GROUP BY "Email"
-HAVING COUNT(*) > 1;
-
-
-WITH duplicates AS (
-   SELECT
-       "Id",
-       "Email",
-       ROW_NUMBER() OVER (PARTITION BY "Email" ORDER BY "Id") AS rn
-   FROM "Users"
-)
-UPDATE "Users" u
-SET "Username" = CASE
-   WHEN d.rn = 1 THEN d."Email"
-   ELSE d."Email" || '_' || d.rn::text
-END
-FROM duplicates d
-WHERE u."Id" = d."Id";
-
-
-SELECT "Username", COUNT(*)
-FROM "Users"
-GROUP BY "Username"
-HAVING COUNT(*) > 1;
-
-
-ALTER TABLE "Users"
-ALTER COLUMN "Username" SET NOT NULL;
-
-ALTER TABLE "Users"
-ADD CONSTRAINT unique_username UNIQUE ("Username");
-SELECT COUNT(*) FROM "Users" WHERE "Username" IS NULL;
-
-
-ALTER TABLE "Users"
-ADD COLUMN "PasswordHash" VARCHAR(255) NOT NULL;
-
-ALTER TABLE "Users"
-ADD COLUMN "PasswordHash" VARCHAR(255);
-
-UPDATE "Users" SET "PasswordHash" = '' WHERE "PasswordHash" IS NULL;
-
-ALTER TABLE "Users"
-ALTER COLUMN "PasswordHash" SET NOT NULL;
-select * from "Users";
-
-
-SELECT
-   column_name,
-   data_type,
-   is_nullable,
-   column_default
-FROM
-   information_schema.columns
-WHERE
-   table_schema = 'public'  
-   AND table_name = 'Users' 
-ORDER BY
-   ordinal_position;
-
-select * from "Users";
-
-ALTER TABLE "Users" DROP COLUMN "Username";
-ALTER TABLE "Users" ALTER COLUMN "Username" DROP NOT NULL;
-ALTER TABLE "Users" DROP COLUMN "PasswordHash";
-
-UPDATE "PizzaItems"
-SET "Size" = CASE "Size"
-   WHEN 'Mala' THEN 'small'
-   WHEN 'Srednja' THEN 'medium'
-   WHEN 'Velika' THEN 'large'
-   ELSE "Size" 
-END
-WHERE "Size" IN ('Mala', 'Srednja', 'Velika');
-
-
-select * from "PizzaItems";
-
-SELECT column_name 
-FROM information_schema.columns 
-WHERE table_name = 'notifications' AND column_name = 'is_deleted';
 
 SELECT * FROM notifications LIMIT 1;
 
