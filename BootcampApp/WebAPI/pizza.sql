@@ -310,7 +310,7 @@ INSERT INTO "DrinkOrderItems" ("OrderId", "DrinkId", "Quantity", "UnitPrice")
 VALUES ('4adf9527-a452-4835-b036-d394ef8dafe7', '9a7d9d99-4565-4dea-8c39-b5ccb189ad65', 1, 2.10);
 
 SELECT * FROM pizza_orders;
-SELECT * FROM pizza_orders LIMIT 1;
+
 ALTER TABLE "PizzaOrders" RENAME TO pizza_orders;
 
 CREATE TABLE "PizzaOrders" (
