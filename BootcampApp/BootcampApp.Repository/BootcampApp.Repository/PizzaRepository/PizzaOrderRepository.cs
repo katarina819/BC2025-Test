@@ -41,7 +41,7 @@ namespace BootcampApp.Repository
             // Query to fetch the pizza order main data
             const string orderQuery = @"
                 SELECT ""OrderId"", ""UserId"", ""OrderDate""
-                FROM ""PizzaOrders"" 
+                FROM pizza_orders 
                 WHERE ""OrderId"" = @OrderId";
 
             await using (var cmd = new NpgsqlCommand(orderQuery, connection))
@@ -114,7 +114,7 @@ namespace BootcampApp.Repository
             up.""PhoneNumber"", up.""Address"",
             poi.""OrderItemId"", poi.""Quantity"", poi.""UnitPrice"",
             p.""PizzaId"", p.""Name"", p.""Size"", p.""Price"", p.""IsVegetarian""
-        FROM ""PizzaOrders""  po
+        FROM pizza_orders  po
         JOIN ""Users"" u ON po.""UserId"" = u.""Id""
         LEFT JOIN ""UserProfiles"" up ON u.""Id"" = up.""UserId""
         JOIN ""PizzaOrderItems"" poi ON po.""OrderId"" = poi.""OrderId""
@@ -196,7 +196,7 @@ namespace BootcampApp.Repository
             {
                 // Insert main order record
                 var insertOrderCmd = new NpgsqlCommand(@"
-                    INSERT INTO ""PizzaOrders"" (""OrderId"", ""UserId"", ""OrderDate"")
+                    INSERT INTO pizza_orders (""OrderId"", ""UserId"", ""OrderDate"")
                     VALUES (@OrderId, @UserId, @OrderDate)", connection, transaction);
 
                 insertOrderCmd.Parameters.AddWithValue("OrderId", order.OrderId);
@@ -258,7 +258,7 @@ namespace BootcampApp.Repository
 
                 // Delete the main order record
                 var deleteOrderCmd = new NpgsqlCommand(
-                    @"DELETE FROM ""PizzaOrders""  WHERE ""OrderId"" = @OrderId", connection, transaction);
+                    @"DELETE FROM pizza_orders  WHERE ""OrderId"" = @OrderId", connection, transaction);
                 deleteOrderCmd.Parameters.AddWithValue("OrderId", orderId);
                 int affected = await deleteOrderCmd.ExecuteNonQueryAsync();
 
