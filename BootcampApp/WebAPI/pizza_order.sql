@@ -310,10 +310,9 @@ INSERT INTO "DrinkOrderItems" ("OrderId", "DrinkId", "Quantity", "UnitPrice")
 VALUES ('4adf9527-a452-4835-b036-d394ef8dafe7', '9a7d9d99-4565-4dea-8c39-b5ccb189ad65', 1, 2.10);
 
 SELECT * FROM pizza_orders;
-SELECT * FROM pizza_orders LIMIT 1;
-ALTER TABLE "PizzaOrders" RENAME TO pizza_orders;
 
-CREATE TABLE "PizzaOrders" (
+
+CREATE TABLE "pizza_orders" (
    "OrderId" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
    "UserId" UUID NOT NULL,
    "OrderDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -339,7 +338,7 @@ INSERT INTO "DrinksOrders" ("UserId")
 VALUES ('1fb4eecd-2ca7-472e-96bf-9d228a49836d')
 RETURNING "OrderId";
 
-INSERT INTO "PizzaOrders" ("UserId") VALUES
+INSERT INTO "pizza_orders" ("UserId") VALUES
 ('1fb4eecd-2ca7-472e-96bf-9d228a49836d'),  -- Ana
 ('daa54377-0a81-4d9f-aa5f-e2fe3d2cf24b'),  -- Ivan
 ('e54cee70-3e5e-4e7c-a95c-780b58cd5926');  -- Marko
@@ -354,28 +353,26 @@ CREATE TABLE "PizzaOrderItems" (
    "PizzaId" UUID NOT NULL,
    "Quantity" INT NOT NULL,
    "UnitPrice" NUMERIC(10, 2) NOT NULL,
-   FOREIGN KEY ("OrderId") REFERENCES "PizzaOrders"("OrderId") ON DELETE CASCADE,
+   FOREIGN KEY ("OrderId") REFERENCES "pizza_orders"("OrderId") ON DELETE CASCADE,
    FOREIGN KEY ("PizzaId") REFERENCES "PizzaItems"("PizzaId") ON DELETE CASCADE
 );
 
-/* SELECT "OrderId" FROM "PizzaOrders";
-*/ 
 
 INSERT INTO "PizzaOrderItems" ("OrderId", "PizzaId", "Quantity", "UnitPrice") VALUES
-('f3703dfb-0f11-4c96-862a-7863ff262de6', 'd787b292-6a7b-4177-8447-ecb2bd791267', 2, 7.90),
-('c0a223f2-ff70-4241-ab23-1220398a9ca4', 'cda8e29d-10d3-4d18-a78d-d48f67e6727d', 1, 6.70),
-('721d6f31-1863-4282-b1e9-5cef7b61c775', '1a358b81-4f2c-4c0f-9b88-c7de2620dbf3', 3, 5.40);
+('c733bcde-5940-490f-a0e7-e24b79d589c2', 'd787b292-6a7b-4177-8447-ecb2bd791267', 2, 7.90),
+('80127822-3399-426d-a6a3-e4c9c0a4306f', 'cda8e29d-10d3-4d18-a78d-d48f67e6727d', 1, 6.70),
+('f522aa71-be22-4388-ae07-f1ed7aeb2133', '1a358b81-4f2c-4c0f-9b88-c7de2620dbf3', 3, 5.40);
 
-INSERT INTO "PizzaOrders" ("UserId")
-VALUES ('670dffdc-a4dd-47d2-8aac-be8bb00452e4')  
+INSERT INTO "pizza_orders" ("UserId")
+VALUES ('1fb4eecd-2ca7-472e-96bf-9d228a49836d')  
 RETURNING "OrderId";
 
-INSERT INTO "PizzaOrders" ("UserId")
-VALUES ('81ee6d58-4a84-4f0b-8539-565e4b55ad07')  
+INSERT INTO "pizza_orders" ("UserId")
+VALUES ('daa54377-0a81-4d9f-aa5f-e2fe3d2cf24b')  
 RETURNING "OrderId";
 
-INSERT INTO "PizzaOrders" ("UserId")
-VALUES ('72926c3a-855f-45d9-812a-e8c8faafeecf')  
+INSERT INTO "pizza_orders" ("UserId")
+VALUES ('e54cee70-3e5e-4e7c-a95c-780b58cd5926')  
 RETURNING "OrderId";
 
 
@@ -384,8 +381,6 @@ ADD COLUMN "TotalPrice" NUMERIC(10, 2) GENERATED ALWAYS AS ("Quantity" * "UnitPr
 
 select * from "PizzaOrderItems";
 
-/* SELECT "OrderId", "UserId", "OrderDate" FROM "PizzaOrders";
-*/
 SELECT "PizzaId", "Name", "Size" FROM "PizzaItems";
 
 --inner join
@@ -395,7 +390,7 @@ SELECT "PizzaId", "Name", "Size" FROM "PizzaItems";
    pi."Name" AS "PizzaName",
    poi."Quantity",
    poi."UnitPrice"
-FROM "PizzaOrders" po
+FROM "pizza_orders" po
 INNER JOIN "Users" u ON po."UserId" = u."Id"
 INNER JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
 INNER JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
@@ -408,7 +403,7 @@ INNER JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
    pi."Name" AS "PizzaName",
    poi."Quantity",
    poi."UnitPrice"
-FROM "PizzaOrders" po
+FROM "pizza_orders" po
 LEFT JOIN "Users" u ON po."UserId" = u."Id"
 LEFT JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
 LEFT JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
@@ -431,7 +426,7 @@ RIGHT JOIN "PizzaItems" pi ON poi."PizzaId" = pi."PizzaId";
    up."PhoneNumber", up."Address",
    poi."OrderItemId", poi."Quantity", poi."UnitPrice",
    pi."PizzaId", pi."Name" as PizzaName, pi."Size", pi."Price", pi."IsVegetarian"
-FROM "PizzaOrders" po
+FROM "pizza_orders" po
 JOIN "Users" u ON po."UserId" = u."Id"
 LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
 JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
@@ -455,7 +450,7 @@ SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
    up."PhoneNumber", up."Address",
    poi."OrderItemId", poi."Quantity", poi."UnitPrice",
    p."PizzaId", p."Name", p."Size", p."Price", p."IsVegetarian"
-FROM "PizzaOrders" po
+FROM "pizza_orders" po
 JOIN "Users" u ON po."UserId" = u."Id"
 LEFT JOIN "UserProfiles" up ON u."Id" = up."UserId"
 JOIN "PizzaOrderItems" poi ON po."OrderId" = poi."OrderId"
